@@ -20,6 +20,7 @@ function App() {
         <ul>
           Capstone Group Members:
           <li>Blake Engrav</li>
+          <li>Jordan Hove</li>
         </ul>
       </header>
     </div>
