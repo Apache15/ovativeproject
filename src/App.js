@@ -17,6 +17,10 @@ function App() {
         >
           Learn React
         </a>
+        <ul>
+          Capstone Group Members:
+          <li>Blake Engrav</li>
+        </ul>
       </header>
     </div>
   );
