@@ -18,6 +18,11 @@ function App() {
         >
           Learn React
         </a>
+        <ul>
+          Capstone Group Members:
+          <li>Blake Engrav</li>
+          <li>Jordan Hove</li>
+        </ul>
       </header>
     </div>
   );
