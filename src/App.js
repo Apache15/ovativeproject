@@ -22,6 +22,7 @@ function App() {
           <li>Blake Engrav</li>
           <li>Cord Redding</li>
           <li>Jordan Hove</li>
+          <li>James Hinks</li>
         </ul>
       </header>
     </div>
