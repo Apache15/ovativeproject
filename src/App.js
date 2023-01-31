@@ -21,6 +21,7 @@ function App() {
           Capstone Group Members:
           <li>Blake Engrav</li>
           <li>Jordan Hove</li>
+          <li>James Hinks</li>
         </ul>
       </header>
     </div>
