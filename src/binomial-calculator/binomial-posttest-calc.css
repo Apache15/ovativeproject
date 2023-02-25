@@ -1,0 +1,12 @@
+.desiredLift {
+    background-color: white;
+}
+.container {
+    display: flex;
+    justify-content: space-between;
+}
+.Form-box{
+    display:flex;
+    padding:50px;
+    flex-direction: column;
+}
