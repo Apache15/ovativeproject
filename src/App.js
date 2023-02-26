@@ -1,25 +1,16 @@
 import logo from './logo.svg';
 import './App.css';
 import ResponsiveAppBar from './nav';
-
+import BinomialPostTestCalculator from './binomial-calculator/binomial-posttest-calc';
 function App() {
   return (
-    
+
     <div className="App">
-      <ResponsiveAppBar/>
+      <ResponsiveAppBar />
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <div className="Calculator-window">
+          <BinomialPostTestCalculator />
+        </div>
         <ul>
           Capstone Group Members:
           <li>Blake Engrav</li>
