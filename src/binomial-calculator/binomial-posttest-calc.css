@@ -3,10 +3,22 @@
 }
 .container {
     display: flex;
+    text-align: center;
     justify-content: space-between;
 }
-.Form-box{
+.Input-form-box{
     display:flex;
-    padding:50px;
+    padding:20px;
     flex-direction: column;
+    border-color:black;
+    border-style:solid;
+    border-radius: 10px;
+    width:30%;
+    height:auto;
+}
+.Form-title{
+    font-size:20px;
+    color:black;
+    padding-left: 5px;
+    padding-bottom: 10px;
 }
