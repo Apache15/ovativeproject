@@ -16,14 +16,13 @@ export default function nav() {
                 display: 'block', 
                 fontFamily: "sans-serif",
                 fontWeight: 700,
-
-                }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
-        </Toolbar>
-      </AppBar>
+              }}
+            >
+              {page}
+            </Button>
+          ))}
+        </Box>
+      </Toolbar>
+    </AppBar>
   )
 }
