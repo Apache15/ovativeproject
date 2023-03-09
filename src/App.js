@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import ResponsiveAppBar from './nav';
+import ContPostTest from './continuous-posttest-calc';
 
 function App() {
   return (
@@ -8,18 +9,7 @@ function App() {
     <div className="App">
       <ResponsiveAppBar/>
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <ContPostTest />
         <ul>
           Capstone Group Members:
           <li>Blake Engrav</li>
