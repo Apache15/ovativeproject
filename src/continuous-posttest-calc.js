@@ -1,11 +1,16 @@
 import { Box, FormControl, InputAdornment, TextField, Button, Container, Tooltip} from '@mui/material'
 import React, { useState } from "react";
-import jStat from 'jstat';
+import jstat from 'jstat';
 
 
 
 export default function ContPostTest() {
+
+    // var ttest = require('ttest');
+
+
     const [isDetailed, setDetail] = useState(true);
+    const [conclusion, setConclusion] = useState("");
     const [inputs, setInputs] = useState({
         avgRevVar: Number,
         avgRevCtrl: Number,
@@ -13,45 +18,58 @@ export default function ContPostTest() {
         stdDevCtrl: Number,
         sampleSizeVar: Number,
         sampleSizeCtrl: Number,
-        confidenceLvl: Number
+        confidenceLvl: Number,
+        testDuration:Number
     })
 
-    const [avgRevDif, setAvgRevDif] = useState(inputs.avgRevVar-inputs.avgRevCtrl);
-    const [testStat, setTestStat] = useState(calcTestStat());
+    // const stat = ttest(
+    //     {mean: inputs.avgRevCtrl, variance: Math.pow(inputs.stdDevCtrl, 2), size: inputs.sampleSizeCtrl},
+    //     {mean: inputs.avgRevVar, variance: Math.pow(inputs.stdDevVar, 2), size: inputs.sampleSizeVar},
+    //     {mu:-1, alpha:(1-(1-inputs.confidenceLvl/100)/2)}
+    // )
 
+    const avgRevDif = (+inputs.avgRevVar-+inputs.avgRevCtrl).toFixed(2);
+
+    //Get input from textboxes
     const handleInputChange = (e) => {
         const {name, value} = e.target;
         setInputs((prev) => {
             return {...prev, [name]: value};
         });
-        setAvgRevDif(() => {
-            return ((inputs.avgRevVar-inputs.avgRevCtrl).toFixed(2));
-        });
-        setTestStat(()=>{
-            return(calcTestStat().toFixed(3));
-        })
-        console.log(tdistUp());
-
+        if(+pVal <= (1-(+inputs.confidenceLvl/100)))
+            setConclusion("Reject");
+        else 
+            setConclusion("Failed to Reject")
+        // console.log(stat.pValue())
     };
 
-    function tdistUp() {
-        const df = ((+inputs.sampleSizeCtrl + +inputs.sampleSizeVar -2) * (calcSP()) * Math.sqrt(((+inputs.sampleSizeVar-1) + (+inputs.sampleSizeCtrl-1))))
-        const tValue = jStat.studentt.inv((1- ((1- +inputs.confidenceLvl * .01) / 2)), df)
-        return (+tValue + +avgRevDif);
+    function marginOfError(){ //used in the calculation of the confidence interval
+        const tScore = jstat.studentt.inv(1- (1- +inputs.confidenceLvl/100 )/2, (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar -2))
+        const standardError = (calcSP() * Math.sqrt((1/+inputs.sampleSizeCtrl) + (1/+inputs.sampleSizeVar)))
+        return (+tScore * +standardError);
     }
 
-    function calcTestStat(){
-        const numerator = (+inputs.avgRevVar- +inputs.avgRevCtrl);
-        const denominator = (calcSP() * Math.sqrt(((1/+inputs.sampleSizeCtrl)+(1/+inputs.sampleSizeVar))));
-        return (numerator/denominator);
-    }
+    const confidenceIntevalUpper = +avgRevDif + marginOfError();
+    const confidenceIntevalLower = +avgRevDif - marginOfError();
 
+    //Test statistic calculations
+    const denominatorTS = (calcSP() * Math.sqrt(((1/+inputs.sampleSizeCtrl)+(1/+inputs.sampleSizeVar))));
+    const testStat = (+avgRevDif/+denominatorTS).toFixed(3);
+
+    //calculate the pooled standard deviation
     function calcSP(){
-        const bottom = (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2); //These are bad names I know, they refer to the denominator and both parts of the numerator
-        const topLeft = (+inputs.sampleSizeVar-1) * Math.pow(+inputs.stdDevVar,2);
-        const topRight = (+inputs.sampleSizeCtrl -1) * Math.pow(+inputs.stdDevCtrl,2);
-        return Math.sqrt((topRight + topLeft)/bottom);
+        var bottom = (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2); //These are bad names I know, they refer to the denominator and both parts of the numerator
+        var topLeft = (+inputs.sampleSizeVar-1) * Math.pow(+inputs.stdDevVar,2);
+        var topRight = ((+inputs.sampleSizeCtrl -1) * Math.pow(+inputs.stdDevCtrl,2));
+        var SP = (Math.sqrt((topRight + topLeft)/bottom));
+        return SP;
     }
+
+    //p value calculation using the jstat library https://jstat.github.io/distributions.html#jStat.studentt.pdf
+    const pVal = jstat.studentt.pdf(+testStat, (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2)).toPrecision(2);
+
+    const lift = ((+avgRevDif/+inputs.avgRevCtrl)*100).toPrecision(2)
+
     
 
     return (
@@ -73,7 +91,6 @@ export default function ContPostTest() {
                                     name='avgRevVar'
                                     InputLabelProps={{ shrink: true}}
                                     onChange={handleInputChange}
-                                    onKeyUp={handleInputChange}
                                     />
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
@@ -87,7 +104,6 @@ export default function ContPostTest() {
                                     name='avgRevCtrl'
                                     InputLabelProps={{ shrink: true }}
                                     onChange={handleInputChange}
-                                    onKeyUp={handleInputChange}
                                 />
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
@@ -101,7 +117,7 @@ export default function ContPostTest() {
                                     name='stdDevVar'
                                     InputLabelProps={{ shrink: true }}
                                     onChange={handleInputChange}
-                                    onKeyUp={handleInputChange}
+
                                 />
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
@@ -115,7 +131,6 @@ export default function ContPostTest() {
                                     name='stdDevCtrl'
                                     InputLabelProps={{ shrink: true }}
                                     onChange={handleInputChange}
-                                    onKeyUp={handleInputChange}
                                 />
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
@@ -129,7 +144,6 @@ export default function ContPostTest() {
                                     name='sampleSizeVar'
                                     InputLabelProps={{ shrink: true }}
                                     onChange={handleInputChange}
-                                    onKeyUp={handleInputChange}
                                 />
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
@@ -143,7 +157,6 @@ export default function ContPostTest() {
                                     name='sampleSizeCtrl'
                                     InputLabelProps={{ shrink: true }}
                                     onChange={handleInputChange}
-                                    onKeyUp={handleInputChange}
                                 />
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested value range is 80% - 95%" : ""} placement="left">
@@ -160,13 +173,37 @@ export default function ContPostTest() {
                                     }}
                                     InputLabelProps={{ shrink: true }}
                                     onChange={handleInputChange}
-                                    onKeyUp={handleInputChange}
                                 />
+                            </Tooltip>
+                            <Tooltip title={isDetailed === true ? "Something" : ""} placement="left" >
+                                <TextField sx={{ m: 1, width: '12ch', input: {color:'black'}, label: {color: 'black'}}}
+                                    className="testDuration-input"
+                                    variant="standard"
+                                    required={true}
+                                    placeholder="5"
+                                    type="number"
+                                    color='primary'
+                                    label="Test duration in days"
+                                    name='testDuration-input'
+                                    InputLabelProps={{ shrink: true}}
+                                    onChange={handleInputChange}
+                                    />
                             </Tooltip>
                         </FormControl>
                     </Box>
                     <Box className='outputs'  width="50%" sx={{m:'2ch', border: "solid black", borderRadius: "10px"}}>
                         <FormControl>
+                            <Tooltip title={isDetailed === true ? "Something" : ""} placement="left">
+                                <TextField sx={{m:"1ch", width:'12ch'}}
+                                    disabled
+                                    className='test-result-Out'
+                                    id="outlined-disabled"
+                                    label="Test conclusion"
+                                    InputLabelProps={{ shrink: true }}
+                                    value={conclusion}
+                                    >
+                                </TextField>
+                            </Tooltip>
                             <Tooltip title={isDetailed === true ? "Something" : ""} placement="left">
                                 <TextField sx={{m:"1ch", width:'12ch'}}
                                     disabled
@@ -196,7 +233,7 @@ export default function ContPostTest() {
                                     id="outlined-disabled"
                                     label="P-value"
                                     InputLabelProps={{ shrink: true }}
-                                    defaultValue=""
+                                    value={pVal}
                                     >
                                 </TextField>
                             </Tooltip>
@@ -206,7 +243,22 @@ export default function ContPostTest() {
                                     className='Confidence-Interval-Out'
                                     id="outlined-disabled"
                                     label= { inputs.confidenceLvl + "% Confidence Interval"}
-                                    defaultValue="(??, ??)"
+                                    // defaultValue="(??, ??)"
+                                    value={"(" + confidenceIntevalLower.toFixed(3) + ", " + confidenceIntevalUpper.toFixed(3) + ")"}
+                                    >
+                                </TextField>
+                            </Tooltip>
+                            <Tooltip title={isDetailed === true ? "How confident we are that the revenue difference is in this interval" : ""} placement="left">
+                                <TextField sx={{m:"1ch", width:'12ch'}}
+                                    disabled
+                                    className='lift-out'
+                                    id="outlined-disabled"
+                                    label= {"Observed Lift"}
+                                    InputProps={{
+                                        endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                    }}
+                                    InputLabelProps={{ shrink: true }}
+                                    value={lift}
                                     >
                                 </TextField>
                             </Tooltip>
