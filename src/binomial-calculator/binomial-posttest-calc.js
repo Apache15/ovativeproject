@@ -5,7 +5,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import React, { useState } from "react";
-
+import Slide from '@mui/material/Slide';
 
 export default function BinomialPostTestCalculator() {
     const [isDetailed, setDetail] = useState(true);
@@ -19,19 +19,19 @@ export default function BinomialPostTestCalculator() {
     function ncdf(x, mean, std) {
         x = (x - mean) / std
         var t = 1 / (1 + .2315419 * Math.abs(x))
-        var d =.3989423 * Math.exp( -x * x / 2)
-        var prob = d * t * (.3193815 + t * ( -.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))))
-        if( x > 0 ) prob = 1 - prob
+        var d = .3989423 * Math.exp(-x * x / 2)
+        var prob = d * t * (.3193815 + t * (-.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))))
+        if (x > 0) prob = 1 - prob
         return prob
-      }
-    //calculations
+    }
+    //calculations for each stat
     const conRateVar = formData.conVarInput / formData.trafficVarInput;
     const conRateControl = formData.conControlInput / formData.trafficControlInput;
     const conRateDifference = conRateVar - conRateControl;
     const pooledConversionRate = (+formData.conVarInput + +formData.conControlInput) / (+formData.trafficControlInput + +formData.trafficVarInput);
     const liftEstimate = (conRateDifference / conRateControl);
     const testSatistic = conRateDifference / Math.sqrt(((conRateVar * (1 - conRateVar)) / formData.trafficVarInput) + ((conRateControl * (1 - conRateControl)) / formData.trafficControlInput));
-    const pValue = 2*(1-ncdf(Math.abs(testSatistic), 0, 1));
+    const pValue = 2 * (1 - ncdf(Math.abs(testSatistic), 0, 1));
 
 
     const conditionSatisfied = (
@@ -55,7 +55,7 @@ export default function BinomialPostTestCalculator() {
         }
     }
     return (
-        <>
+        <div className="bodyContainer">
             <Button sx={{ mb: "15px" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button>
             <div className="container">
                 <Box className="Input-form-box">
@@ -125,26 +125,25 @@ export default function BinomialPostTestCalculator() {
                 </Box>
                 <Box className="Input-form-box">
                     <div className="Form-title">Conversion Rates</div>
-                    <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
-                        <TextField
-                            sx={{ m: 1 }}
-                            className="desiredLift"
-                            variant="filled"
-                            InputProps={{
-                                color: "black",
-                                endAdornment: <InputAdornment position="end">%</InputAdornment>,
-                                readOnly: true,
-                                inputProps: {
-                                    style: { textAlign: 'right' }
-                                }
-                            }}
-                            type="number"
-                            value={(conRateVar * 100).toPrecision(4)}
-                            label="Conversion Rate, Variant"
-                            InputLabelProps={{ shrink: true }}
-                        >
-                        </TextField>
-                    </Tooltip>
+
+                    <TextField
+                        sx={{ m: 1 }}
+                        className="desiredLift"
+                        variant="filled"
+                        InputProps={{
+                            color: "black",
+                            endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                            readOnly: true,
+                            inputProps: {
+                                style: { textAlign: 'right' }
+                            }
+                        }}
+                        type="number"
+                        value={(conRateVar * 100).toPrecision(4)}
+                        label="Conversion Rate, Variant"
+                        InputLabelProps={{ shrink: true }}
+                    >
+                    </TextField>
                     <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
                         <TextField
                             sx={{ m: 1 }}
@@ -204,7 +203,8 @@ export default function BinomialPostTestCalculator() {
                     </Tooltip>
                 </Box>
                 <Box className="Input-form-box">
-                    <div style={{ color: "black" }}>{conditionSatisfied.toString().toUpperCase()}</div>
+                    <div hidden={conditionSatisfied} style={{ color: "black" , backgroundColor:"red"}}>Reject null hypothesis.</div>
+                    <div hidden={!conditionSatisfied} style={{ color: "black" , backgroundColor:"green"}}>Fail to reject null hypothesis</div>
                     <Accordion >
                         <AccordionSummary
                             expandIcon={"▼"}
@@ -222,6 +222,6 @@ export default function BinomialPostTestCalculator() {
                 </Box>
 
             </div >
-        </>
+        </div>
     )
 }

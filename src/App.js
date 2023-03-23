@@ -2,6 +2,7 @@ import './App.css';
 import { Button, Toolbar, AppBar, Box } from '@mui/material'
 import BinomialPostTestCalculator from './binomial-calculator/binomial-posttest-calc';
 import { useState, useEffect } from 'react';
+import Slide from '@mui/material/Slide';
 function App() {
   const pages = ['Continuous Pre Test', 'Continuous Post Test', 'Binomial Pre Test', 'Binomial Post Test'];
   const [activePage, changePage] = useState(0);
