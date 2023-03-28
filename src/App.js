@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import ResponsiveAppBar from './nav';
 import ContPostTest from './continuous-posttest-calc';
