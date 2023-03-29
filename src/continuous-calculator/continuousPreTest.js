@@ -1,17 +1,27 @@
 import {TextField, InputAdornment, FormControl, Box, Tooltip, Button} from "@mui/material";
-import ".continuousPreTest.css"
-import norminv from 'norminv';
+import "./continuousPreTest.css"
+import jstat from 'jstat';
 import React, {useState} from "react";
 
 export default function ContinuousPreTestCalculator() {
     const [isDetailed, setDetail] = useState(true);
-    const [formData, setData] = useState({})
+    const [formData, setData] = useState({
+        ctrlTrafficPercentInput: 0,
+        varTrafficPercentInput: 0,
+        conBaseRevInput: 0,
+        desiredLiftInput: 0,
+        pooledStandardDeviationInput: 0,
+        confidenceLvlInput: 0,
+        statisticalPowerInput: 0,
+        dailyVisitorsInput: 0
+        
+    })
 
-    const groupSizeRatio = formData.ctrlTrafficPercentInput / formData.varTrafficPercentInput;
-    const varGroupRevenue = formData.conBaseRevInput * (1 + formData.desiredLift);
+    const groupSizeRatio = (formData.ctrlTrafficPercentInput * 0.01) / (formData.varTrafficPercentInput * 0.01);
+    const varGroupRevenue = formData.conBaseRevInput * (1 + (formData.desiredLiftInput * .01));
     const revAbsoluteDiff = Math.abs(formData.conBaseRevInput - varGroupRevenue);
-    const varSampleSize = (1+(1/groupSizeRatio)) * (formData.pooledStandardDeviationInput * (norminv(1-(1-(0.01 * formData.confidenceLvlInput)/2),0,1) +
-        norminv((0.01 * formData.statisticalPowerInput), 0, 1) / (formData.conBaseRevInput - varGroupRevenue)));
+    const varSampleSize = (1 + (1 / groupSizeRatio)) * (( formData.pooledStandardDeviationInput * ( (jstat.normal.inv(((1 - ((1 - (formData.confidenceLvlInput * 0.01))) / 2), 0, 1)) + 
+        jstat.normal.inv((formData.statisticalPowerInput * 0.01), 0, 1)) / (formData.conBaseRevInput - varGroupRevenue))) ^ 2);
     const conSampleSize = (varSampleSize * groupSizeRatio);
     const totalSampleSize = (varSampleSize + conSampleSize);
     const testRunDays = Math.ceil(totalSampleSize / formData.dailyVisitorsInput);
@@ -132,7 +142,7 @@ export default function ContinuousPreTestCalculator() {
                                 required={true}
                                 placeholder="80"
                                 type="number"
-                                name="staticalPowerInput"
+                                name="statisticalPowerInput"
                                 label="Statistical Power (%)"
                                 InputProps={{
                                     endAdornment: <InputAdornment position="end">%</InputAdornment>
@@ -188,7 +198,7 @@ export default function ContinuousPreTestCalculator() {
                             }
                         }}
                         type="number"
-                        value={(groupSizeRatio).toPrecision(4)}
+                        value={(groupSizeRatio).toFixed(2)}
                         label="Ratio of the two group traffic sizes"
                         InputLabelProps={{shrink: true}}
                     >
@@ -206,7 +216,7 @@ export default function ContinuousPreTestCalculator() {
                             }
                         }}
                         type="number"
-                        value={(varGroupRevenue).toPrecision(2)}
+                        value={(varGroupRevenue).toFixed(2)}
                         label="Revenue, Variant Group"
                         InputLabelProps={{shrink: true}}
                     >
@@ -224,7 +234,7 @@ export default function ContinuousPreTestCalculator() {
                             }
                         }}
                         type="number"
-                        value={(revAbsoluteDiff).toPrecision(2)}
+                        value={(revAbsoluteDiff).toFixed(2)}
                         label="Absolute Difference in Revenue"
                         InputLabelProps={{shrink: true}}
                     >
@@ -241,7 +251,7 @@ export default function ContinuousPreTestCalculator() {
                             }
                         }}
                         type="number"
-                        value={(varSampleSize).toPrecision(2)}
+                        value={(varSampleSize).toFixed(2)}
                         label="Sample Size, Variant"
                         InputLabelProps={{shrink: true}}
                     >
@@ -258,7 +268,7 @@ export default function ContinuousPreTestCalculator() {
                             }
                         }}
                         type="number"
-                        value={(conSampleSize).toPrecision(2)}
+                        value={(conSampleSize).toFixed()}
                         label="Sample Size, Control"
                         InputLabelProps={{shrink: true}}
                     >
@@ -275,7 +285,7 @@ export default function ContinuousPreTestCalculator() {
                             }
                         }}
                         type="number"
-                        value={(totalSampleSize).toPrecision(2)}
+                        value={totalSampleSize}
                         label="Total Sample Size"
                         InputLabelProps={{shrink: true}}
                     >
@@ -292,7 +302,7 @@ export default function ContinuousPreTestCalculator() {
                             }
                         }}
                         type="number"
-                        value={(testRunDays)}
+                        value={testRunDays}
                         label="Days to run the test"
                         InputLabelProps={{shrink: true}}
                     >
@@ -309,7 +319,7 @@ export default function ContinuousPreTestCalculator() {
                             }
                         }}
                         type="number"
-                        value={(testRunWeeks)}
+                        value={testRunWeeks}
                         label="Weeks to run the test"
                         InputLabelProps={{shrink: true}}
                     >
