@@ -20,8 +20,8 @@ export default function ContinuousPreTestCalculator() {
     const groupSizeRatio = (formData.ctrlTrafficPercentInput * 0.01) / (formData.varTrafficPercentInput * 0.01);
     const varGroupRevenue = formData.conBaseRevInput * (1 + (formData.desiredLiftInput * .01));
     const revAbsoluteDiff = Math.abs(formData.conBaseRevInput - varGroupRevenue);
-    const varSampleSize = (1 + (1 / groupSizeRatio)) * (( formData.pooledStandardDeviationInput * ( (jstat.normal.inv(((1 - ((1 - (formData.confidenceLvlInput * 0.01))) / 2), 0, 1)) + 
-        jstat.normal.inv((formData.statisticalPowerInput * 0.01), 0, 1)) / (formData.conBaseRevInput - varGroupRevenue))) ^ 2);
+    const varSampleSize = (1 + (1 / groupSizeRatio)) * (Math.pow( formData.pooledStandardDeviationInput * ( (jstat.normal.inv(((1 - ((1 - (formData.confidenceLvlInput * 0.01))) / 2), 0, 1)) + 
+        jstat.normal.inv((formData.statisticalPowerInput * 0.01), 0, 1)) / (formData.conBaseRevInput - varGroupRevenue))),2);
     const conSampleSize = (varSampleSize * groupSizeRatio);
     const totalSampleSize = (varSampleSize + conSampleSize);
     const testRunDays = Math.ceil(totalSampleSize / formData.dailyVisitorsInput);
