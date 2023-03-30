@@ -1,6 +1,6 @@
 import './App.css';
 import ResponsiveAppBar from './nav';
-import ContPostTest from './continuous-posttest-calc';
+import ContPostTest from './continuous-posttest/continuous-posttest-calc';
 
 function App() {
   return (
