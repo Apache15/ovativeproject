@@ -2,6 +2,10 @@
   text-align: center;
 }
 
+div{
+  color:black;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -11,6 +15,12 @@
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+}
+.Calculator-window{
+  width:80vw;
+  height:80vh;
+  margin-top:15vh;
+  text-align: left;
 }
 
 .Calculator-window {

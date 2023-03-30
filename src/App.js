@@ -2,6 +2,9 @@ import './App.css';
 import {Button, Toolbar, AppBar, Box} from '@mui/material'
 import {useState, useEffect} from 'react';
 import ContinuousPreTestCalculator from './continuous-calculator/continuousPreTest';
+import BinomialPostTestCalculator from './binomial-posttest-calculator/binomial-posttest-calc';
+import BiPretest from './binomial-pretest/binomial-pretest-calc';
+import ContPostTest from './continuous-posttest/continuous-posttest-calc';
 
 function App() {
   const pages = ['Continuous Pre Test', 'Continuous Post Test', 'Binomial Pre Test', 'Binomial Post Test'];
@@ -11,6 +14,15 @@ function App() {
     switch(activePage) {
       case "Continuous Pre Test":
         changeData(<ContinuousPreTestCalculator />)
+        break;
+      case "Continuous Post Test":
+        changeData(<ContPostTest />)
+        break;
+      case "Binomial Pre Test":
+        changeData(<BiPretest />)
+        break;
+      case "Binomial Post Test":
+        changeData(<BinomialPostTestCalculator />)
         break;
       default:
         changeData(<div>OOPS</div>);
@@ -43,14 +55,6 @@ function App() {
         <div className="Calculator-window">
           {pageData}
         </div>
-
-        <ul>
-          Capstone Group Members:
-          <li>Blake Engrav</li>
-          <li>Cord Redding</li>
-          <li>Jordan Hove</li>
-          <li>James Hinks</li>
-        </ul>
       </header>
     </div>
   );
