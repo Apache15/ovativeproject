@@ -42,13 +42,6 @@ function App() {
         <div className="Calculator-window">
           {pageData}
         </div>
-        <ul>
-          Capstone Group Members:
-          <li>Blake Engrav</li>
-          <li>Cord Redding</li>
-          <li>Jordan Hove</li>
-          <li>James Hinks</li>
-        </ul>
       </header>
     </div>
   );
