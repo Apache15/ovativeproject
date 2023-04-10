@@ -14,7 +14,13 @@
       opacity: 100%;
     }
   }
-
+  li{
+    font-size:15px
+  }
+.header{
+  text-align: center;
+  font-weight:bold;
+}
 .desiredLift {
     background-color: white;
 }
