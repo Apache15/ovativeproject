@@ -4,6 +4,7 @@ import jstat from 'jstat';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import continousFormulas from './continous-posttest-formulas';
 
 
 export default function ContPostTest() {
@@ -28,25 +29,44 @@ export default function ContPostTest() {
 
     //Get input from textboxes
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setInputs((prev) => {
-            return { ...prev, [name]: value };
-        });
+        if (!isNaN(e.target.value)) {
+            const { name, value } = e.target;
+            setInputs((prev) => {
+                return { ...prev, [name]: value };
+            });
+        }
         // console.log(1-(1-(((.01*++inputs.confidenceLvl)/2))))
         console.log(calcDays())
-        if (+pVal <= (1 - (+inputs.confidenceLvl / 100))) {
-            setConclusion("Reject");
-        }
-        else {
-            setConclusion("Failed to Reject");
-        }
-        if (conclusion === "Reject") {
+        if (conclusion === "Statistically significant" || conclusion === "There is evidence the revenues of the 2 groups is different") {
             setDaysNeeded(0);
         }
         else {
             setDaysNeeded(calcDays());
         }
     };
+
+    //check for whole numbers
+    function inputValid(event, regex) {
+        if (!regex.test(event.key)) {
+            event.preventDefault();
+        }
+    }
+
+    //Set the conclusion text based on the our calculated values and level of detail
+    const doConclusion = () => {
+        if (+pVal <= (1 - (+inputs.confidenceLvl / 100)) && isDetailed === true) {
+            setConclusion("Statistically significant");
+        }
+        else if (+pVal > (1 - (+inputs.confidenceLvl / 100)) && isDetailed === true) {
+            setConclusion("Not statistically significant");
+        }
+        else if (+pVal <= (1 - (+inputs.confidenceLvl / 100)) && isDetailed === false) {
+            setConclusion("There is evidence the revenues of the 2 groups is different");
+        }
+        else {
+            setConclusion("not enough evidence that the revenues of both groups are different");
+        }
+    }
 
     //margin of error used in the calculations of the confidence intervals
     function marginOfError() { //used in the calculation of the confidence interval
@@ -81,6 +101,16 @@ export default function ContPostTest() {
         return SP;
     }
 
+    //checks to see if they confidencelvl input is between 80 and 99.9
+    function checkCLValid(input) {
+        if (+input < 80 || +input > 99.9) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     //p value calculation using the jstat library https://jstat.github.io/distributions.html#jStat.studentt.pdf
     const pVal = jstat.studentt.pdf(+testStat, (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2), 2).toFixed(2);
 
@@ -91,30 +121,35 @@ export default function ContPostTest() {
     const liftConfidenceIntervalUp = ((+avgRevDif + marginOfError()) / +inputs.avgRevCtrl) * 100;
     const lifConfidenceIntevalLow = ((+avgRevDif - marginOfError()) / +inputs.avgRevCtrl) * 100;
 
+    const reject = (+pVal <= (1 - (+inputs.confidenceLvl / 100)));
+
     return (
         <>
-            <Container maxWidth="lg" sx={{ display: "flex", padding: "50px", flexDirection: "column" }}>
-                <Button sx={{ ml: "50px", mt: "50px", mb: "1vh" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button>
-                <Container className='InOut-Container' border={"Solid"} sx={{ display: "inline-flex" }}>
-                    <Box className='input' label="inputs" width="50%" p={'2ch'} sx={{ m: '2ch', border: 'solid black', borderRadius: '10px' }}>
+            <Container maxWidth="xl" >
+                <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltip Detail</Button>
+                <div className="container">
+                    <Box className='Input-form-box'>
+                        <div className="Form-title">Insert Numbers Here</div>
                         <FormControl>
-                            <Box className='input-col-1'>
-                                <Tooltip title={isDetailed === true ? "Something" : ""} placement="left" >
-                                    <TextField sx={{ m: 1, width: '12ch', input: { color: 'black' }, label: { color: 'black' } }}
+                                <Tooltip  title={isDetailed === true ? "The average reveanue for the group tested" : ""} placement="left" >
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                         className="Avg-Rev-Var"
                                         variant="standard"
                                         required={true}
                                         placeholder="32666"
                                         type="number"
-                                        color='primary'
                                         label="Average Revenue, Variant"
                                         name='avgRevVar'
                                         InputLabelProps={{ shrink: true }}
+                                        defaultValue={""}
                                         onChange={handleInputChange}
+                                        onKeyPress={(e) => {
+                                            inputValid(e, /[0-9]/);
+                                        }}
                                     />
                                 </Tooltip>
                                 <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
-                                    <TextField sx={{ m: 1, width: '12ch', input: { color: 'black' }, label: { color: 'black' } }}
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                         className="Avg-Rev-Ctrl"
                                         variant="standard"
                                         required={true}
@@ -123,11 +158,16 @@ export default function ContPostTest() {
                                         label="Average Revenue, Control"
                                         name='avgRevCtrl'
                                         InputLabelProps={{ shrink: true }}
+                                        defaultValue={""}
                                         onChange={handleInputChange}
+                                        onKeyDown={doConclusion}
+                                        onKeyPress={(e) => {
+                                            inputValid(e, /[0-9]/);
+                                        }}
                                     />
                                 </Tooltip>
                                 <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
-                                    <TextField sx={{ m: 1, width: '12ch', input: { color: 'black' }, label: { color: 'black' } }}
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                         className="Std-Dev-Var"
                                         variant="standard"
                                         required={true}
@@ -136,11 +176,16 @@ export default function ContPostTest() {
                                         label="Standard Deviation, Variant"
                                         name='stdDevVar'
                                         InputLabelProps={{ shrink: true }}
+                                        defaultValue={""}
                                         onChange={handleInputChange}
+                                        onKeyDown={doConclusion}
+                                        onKeyPress={(e) => {
+                                            inputValid(e, /[0-9]/);
+                                        }}
                                     />
                                 </Tooltip>
                                 <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
-                                    <TextField sx={{ m: 1, width: '12ch', input: { color: 'black' }, label: { color: 'black' } }}
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                         className="Std-Dev-Ctrl"
                                         variant="standard"
                                         required={true}
@@ -149,13 +194,16 @@ export default function ContPostTest() {
                                         label="Standard Deviation, Control"
                                         name='stdDevCtrl'
                                         InputLabelProps={{ shrink: true }}
+                                        defaultValue={""}
                                         onChange={handleInputChange}
+                                        onKeyDown={doConclusion}
+                                        onKeyPress={(e) => {
+                                            inputValid(e, /[0-9]/);
+                                        }}
                                     />
                                 </Tooltip>
-                            </Box>
-                            <Box className='input-col-2'>
                                 <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
-                                    <TextField sx={{ m: 1, width: '12ch', input: { color: 'black' }, label: { color: 'black' } }}
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                         className="Sample-Size-Var"
                                         variant="standard"
                                         required={true}
@@ -164,11 +212,16 @@ export default function ContPostTest() {
                                         label="Sample Size, Variant"
                                         name='sampleSizeVar'
                                         InputLabelProps={{ shrink: true }}
+                                        defaultValue={""}
                                         onChange={handleInputChange}
+                                        onKeyDown={doConclusion}
+                                        onKeyPress={(e) => {
+                                            inputValid(e, /[0-9]/);
+                                        }}
                                     />
                                 </Tooltip>
                                 <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
-                                    <TextField sx={{ m: 1, width: '12ch', input: { color: 'black' }, label: { color: 'black' } }}
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                         className="Sample-Size-Ctrl"
                                         variant="standard"
                                         required={true}
@@ -177,11 +230,16 @@ export default function ContPostTest() {
                                         label="Sample Size, Control"
                                         name='sampleSizeCtrl'
                                         InputLabelProps={{ shrink: true }}
+                                        defaultValue={""}
                                         onChange={handleInputChange}
+                                        onKeyDown={doConclusion}
+                                        onKeyPress={(e) => {
+                                            inputValid(e, /[0-9]/);
+                                        }}
                                     />
                                 </Tooltip>
                                 <Tooltip title={isDetailed === true ? "Suggested value range is 80% - 95%" : ""} placement="left">
-                                    <TextField sx={{ m: 1, width: '12ch', input: { color: 'black' }, label: { color: 'black' } }}
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                         className="Confidence-Lvl"
                                         variant="standard"
                                         required={true}
@@ -192,12 +250,20 @@ export default function ContPostTest() {
                                         InputProps={{
                                             endAdornment: <InputAdornment position="end">%</InputAdornment>,
                                         }}
+                                        error={checkCLValid(inputs.confidenceLvl)}
+                                        value={inputs.confidenceLvl}
+                                        helperText={"Enter a number from 80 to 99.9"}
                                         InputLabelProps={{ shrink: true }}
+                                        defaultValue={"90"}
                                         onChange={handleInputChange}
+                                        onKeyDown={doConclusion}
+                                        onKeyPress={(e) => {
+                                            inputValid(e, /[0-9]/);
+                                        }}
                                     />
                                 </Tooltip>
                                 <Tooltip title={isDetailed === true ? "Something" : ""} placement="left" >
-                                    <TextField sx={{ m: 1, width: '12ch', input: { color: 'black' }, label: { color: 'black' } }}
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                         className="testDuration-input"
                                         variant="standard"
                                         required={true}
@@ -208,43 +274,35 @@ export default function ContPostTest() {
                                         name='testDuration-input'
                                         InputLabelProps={{ shrink: true }}
                                         onChange={handleInputChange}
+                                        onKeyDown={doConclusion}
+                                        onKeyPress={(e) => {
+                                            inputValid(e, /[0-9]/);
+                                        }}
                                     />
                                 </Tooltip>
-                            </Box>
+                            
                         </FormControl>
                     </Box>
-                    <Box className='outputs' width="50%" sx={{ m: '2ch', border: "solid black", borderRadius: "10px" }}>
+                    <Box className='Input-form-box'>
+                        <div className="Form-title">Outputs</div>
                         <FormControl>
-                            <Box className='col 1'>
-                                <Tooltip title={isDetailed === true ? "We reject if there is statistically significant evidence that the revenue of" +
-                                    " the variant group is different than the control" : ""} placement="left">
-                                    <TextField sx={{ m: "1ch", width: '13ch' }}
-                                        disabled
-                                        className='test-result-Out'
-                                        id="outlined-disabled"
-                                        label="Test conclusion"
-                                        InputLabelProps={{ shrink: true }}
-                                        value={conclusion}
-                                    >
-                                    </TextField>
-                                </Tooltip>
                                 <Tooltip title={isDetailed === true ? "The difference between the averages of the variant versus control group" : ""} placement="left">
-                                    <TextField sx={{ m: "1ch", width: '13ch' }}
-                                        disabled
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                         variant="filled"
                                         className='Avg-Rev-Out'
-                                        id="outlined-disabled"
+                                        id="outlined"
                                         label="Average Revanue Difference"
+                                        inputProps={{ readOnly: true }}
                                         InputLabelProps={{ shrink: true }}
                                         value={avgRevDif}
                                     >
                                     </TextField>
                                 </Tooltip>
-                                <Tooltip title={isDetailed === true ? "Shows how closely your observed data match the distribution expected under the null hypothesis." +
-                                    "It is used to calculate the p-value." : ""} placement="left">
-                                    <TextField sx={{ m: "1ch", width: '13ch' }}
-                                        disabled
+                                <Tooltip title={isDetailed === true ? "Shows how closely your observed data match the distribution expected under the null hypothesis." : ""} placement="left">
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                         variant="filled"
                                         className='Test-Stat-Out'
-                                        id="outlined-disabled"
+                                        id="outlined"
                                         label="Test statistic"
                                         InputLabelProps={{ shrink: true }}
                                         value={testStat}
@@ -252,37 +310,37 @@ export default function ContPostTest() {
                                     </TextField>
                                 </Tooltip>
                                 <Tooltip title={isDetailed === true ? "The probability of obtaining results at least as extreme as the observed results, assuming the null hypothesis is true." : ""} placement="left">
-                                    <TextField sx={{ m: "1ch", width: '13ch' }}
-                                        disabled
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                        variant="filled"
                                         className='P-Value-out'
-                                        id="outlined-disabled"
+                                        id="outlined"
                                         label="P-value"
+                                        inputProps={{ readOnly: true }}
                                         InputLabelProps={{ shrink: true }}
                                         value={pVal}
                                     >
                                     </TextField>
                                 </Tooltip>
-                            </Box>
-                            <Box className='col 2'>
                                 <Tooltip title={isDetailed === true ? "How confident we are that the revenue difference is in this interval" : ""} placement="left">
-                                    <TextField sx={{ m: "1ch", width: '13ch' }}
-                                        disabled
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                        variant='filled'
                                         className='Confidence-Interval-Out'
-                                        id="outlined-disabled"
-                                        label={inputs.confidenceLvl + "% Confidence Interval"}
-                                        // defaultValue="(??, ??)"
+                                        id="outlined"
+                                        inputProps={{ readOnly: true }}
+                                        label={"Confidence Interval"}
                                         value={"(" + confidenceIntevalLower.toFixed(2) + ", " + confidenceIntevalUpper.toFixed(2) + ")"}
                                     >
                                     </TextField>
                                 </Tooltip>
                                 <Tooltip title={isDetailed === true ? "Percent increase or decrease in metric for users who received a variant versus a control group" : ""} placement="left">
-                                    <TextField sx={{ m: "1ch", width: '13ch' }}
-                                        disabled
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                        variant="filled"
                                         className='lift-out'
-                                        id="outlined-disabled"
+                                        id="outlined"
                                         label={"Observed Lift"}
                                         InputProps={{
                                             endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                            readOnly: true,
                                         }}
                                         InputLabelProps={{ shrink: true }}
                                         value={lift}
@@ -291,45 +349,37 @@ export default function ContPostTest() {
                                 </Tooltip>
                                 <Tooltip
                                     title={isDetailed === true ? "We " + inputs.confidenceLvl + "% are confident that the true revenue lift is within the interval" : ""} placement="left">
-                                    <TextField sx={{ m: "1ch", width: '13ch' }}
-                                        disabled
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                        variant="filled"
                                         className='Lift-Confidence-Interval-Out'
-                                        id="outlined-disabled"
-                                        label={inputs.confidenceLvl + "% Confidence Interval, lift"}
+                                        id="outlined"
+                                        label={"Confidence Interval, lift"}
+                                        inputProps={{ readOnly: true }}
                                         InputLabelProps={{ shrink: true }}
                                         value={"(" + lifConfidenceIntevalLow.toFixed(2) + ", " + liftConfidenceIntervalUp.toFixed(2) + ")"}
                                     >
                                     </TextField>
                                 </Tooltip>
                                 <Tooltip title={isDetailed === true ? "Days needed for more testing, no days needed if the test is statistically significant" : ""} placement="left">
-                                    <TextField sx={{ m: "1ch", width: '13ch' }}
-                                        disabled
+                                    <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                        variant="filled"
                                         className='Additional-Days-out'
-                                        id="outlined-disabled"
+                                        id="outlined"
                                         label={"Additional days needed"}
+                                        inputProps={{ readOnly: true }}
                                         InputLabelProps={{ shrink: true }}
                                         value={+daysNeeded}
                                     >
                                     </TextField>
                                 </Tooltip>
-                            </Box>
                         </FormControl>
                     </Box>
-                </Container>
-                <Accordion>
-                    <AccordionSummary
-                        expandIcon={"▼"}
-                        aria-controls="panel3a-content"
-                        id="panel3a-header"
-                    >
-                        <Typography>Education</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Typography> Formula</Typography>
-                        <Typography> Formula</Typography>
-                        <Typography> Formula</Typography>
-                    </AccordionDetails>
-                </Accordion>
+                    <Box className='Input-form-box'>
+                        <div hidden={reject} style={{ color: "black", backgroundColor: "#b05d5d" }}>{conclusion}</div>
+                        <div hidden={!reject} style={{ color: "black", backgroundColor: "#6eb05d" }}>{conclusion}</div>
+                    </Box>
+                </div>
+                <continousFormulas/>
             </Container>
         </>
     )
