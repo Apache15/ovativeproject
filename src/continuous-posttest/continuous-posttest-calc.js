@@ -5,6 +5,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ContinousFormulas from './continous-posttest-formulas';
+import ContinuousDefinitions from '../continuous-definitions/continuousDefinitions';
 
 
 export default function ContPostTest() {
@@ -100,16 +101,6 @@ export default function ContPostTest() {
         var topRight = ((+inputs.sampleSizeCtrl - 1) * Math.pow(+inputs.stdDevCtrl, 2));
         var SP = (Math.sqrt((topRight + topLeft) / bottom));
         return SP;
-    }
-
-    //checks to see if they confidencelvl input is between 80 and 99.9
-    function checkCLValid(input) {
-        if (+input < 80 || +input > 99.9) {
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 
     //p value calculation using the jstat library https://jstat.github.io/distributions.html#jStat.studentt.pdf
@@ -380,6 +371,7 @@ export default function ContPostTest() {
                     </Box>
                 </div>
                 <ContinousFormulas />
+                <ContinuousDefinitions/>
             </Container>
         </>
     )

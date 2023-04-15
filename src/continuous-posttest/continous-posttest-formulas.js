@@ -29,7 +29,7 @@ export default function ContinousFormulas() {
                     aria-controls="panel3a-content"
                     id="panel3a-header"
                 >
-                    <Typography>Formulas and Notation</Typography>
+                    <div className="header">Formulas and Notation</div>
                 </AccordionSummary>
                 <AccordionDetails sx={{ display: 'flex', padding: "0ch", borderTop: "1px solid rgba(0, 0, 0, .25) " }}>
                     <Box className='col' width='30%' sx={{ margin: '1ch 5ch 1ch 2ch', paddingRight: '0ch' }}>
@@ -85,7 +85,7 @@ export default function ContinousFormulas() {
                     aria-controls="panel3a-content"
                     id="panel3a-header"
                 >
-                    <Typography>Testing Assumptions</Typography>
+                    <div className="header">Testing Assumptions</div>
                 </AccordionSummary>
                 <AccordionDetails sx={{ display: 'flow', padding: "1ch", borderTop: "1px solid rgba(0, 0, 0, .25) " }}>
                     <Box >
@@ -113,7 +113,7 @@ export default function ContinousFormulas() {
                     aria-controls="panel3a-content"
                     id="panel3a-header"
                 >
-                    <Typography>Formal Hypothesis Testing Definition</Typography>
+                    <div className="header">Formal Hypothesis Testing Definition</div>
                 </AccordionSummary>
                 <AccordionDetails sx={{ display: 'flow', padding: "1ch", borderTop: "1px solid rgba(0, 0, 0, .25) " }}>
                     <Typography marginBottom='1ch'><b>First define the research question:</b> Are the revenues for the variant and control groups significantly different?</Typography>
