@@ -1,32 +1,60 @@
-import logo from './logo.svg';
 import './App.css';
-import ResponsiveAppBar from './nav';
+import {Button, Toolbar, AppBar, Box} from '@mui/material'
+import {useState, useEffect} from 'react';
+import ContinuousPreTestCalculator from './continuous-calculator/continuousPreTest';
+import BinomialPostTestCalculator from './binomial-posttest-calculator/binomial-posttest-calc';
+import BiPretest from './binomial-pretest/binomial-pretest-calc';
+import ContPostTest from './continuous-posttest/continuous-posttest-calc';
 
 function App() {
+  const pages = ['Continuous Pre Test', 'Continuous Post Test', 'Binomial Pre Test', 'Binomial Post Test'];
+  const [activePage, changePage] = useState(0);
+  const [pageData, changeData] = useState(0);
+  useEffect(() => {
+    switch(activePage) {
+      case "Continuous Pre Test":
+        changeData(<ContinuousPreTestCalculator />)
+        break;
+      case "Continuous Post Test":
+        changeData(<ContPostTest />)
+        break;
+      case "Binomial Pre Test":
+        changeData(<BiPretest />)
+        break;
+      case "Binomial Post Test":
+        changeData(<BinomialPostTestCalculator />)
+        break;
+      default:
+        changeData(<div>OOPS</div>);
+    }
+  }, [activePage])
+
   return (
-    
     <div className="App">
-      <ResponsiveAppBar/>
+      <AppBar position='fixed'>
+        <Toolbar sx={{ backgroundColor: 'White'}}>
+          <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'} }}>
+            {pages.map((page) => (
+              <Button
+                onClick={()=>{changePage(page);}}
+                key={page}
+                sx={{
+                  my: 2, color: '#FA4616',
+                  display: 'block',
+                  fontFamily: "sans-serif",
+                  fontWeight: 700,
+                }}
+              > 
+                {page}
+              </Button>
+            ))}
+          </Box>
+        </Toolbar>
+      </AppBar>
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <ul>
-          Capstone Group Members:
-          <li>Blake Engrav</li>
-          <li>Cord Redding</li>
-          <li>Jordan Hove</li>
-          <li>James Hinks</li>
-        </ul>
+        <div className="Calculator-window">
+          {pageData}
+        </div>
       </header>
     </div>
   );
