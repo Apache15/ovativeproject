@@ -5,6 +5,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ContinousFormulas from './continous-posttest-formulas';
+import ContinuousDefinitions from '../continuous-definitions/continuousDefinitions';
 
 
 export default function ContPostTest() {
@@ -100,13 +101,14 @@ export default function ContPostTest() {
     const testStat = (+avgRevDif / +denominatorTS).toFixed(3);
 
     //calculate the pooled standard deviation
-    // function calcSP() {
-    //     var bottom = (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2); //These are bad names I know, they refer to the denominator and both parts of the numerator
-    //     var topLeft = (+inputs.sampleSizeVar - 1) * Math.pow(+inputs.stdDevVar, 2);
-    //     var topRight = ((+inputs.sampleSizeCtrl - 1) * Math.pow(+inputs.stdDevCtrl, 2));
-    //     var SP = (Math.sqrt((topRight + topLeft) / bottom));
-    //     return SP;
-    // }
+    function calcSP() {
+        var bottom = (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2); //These are bad names I know, they refer to the denominator and both parts of the numerator
+        var topLeft = (+inputs.sampleSizeVar - 1) * Math.pow(+inputs.stdDevVar, 2);
+        var topRight = ((+inputs.sampleSizeCtrl - 1) * Math.pow(+inputs.stdDevCtrl, 2));
+        var SP = (Math.sqrt((topRight + topLeft) / bottom));
+        return SP;
+    }
+
 
     //p value calculation using the jstat library https://jstat.github.io/distributions.html#jStat.studentt.pdf
     const pVal = jstat.studentt.pdf(+testStat, (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2), 2).toFixed(2);
@@ -376,6 +378,7 @@ export default function ContPostTest() {
                     </Box>
                 </div>
                 <ContinousFormulas />
+                <ContinuousDefinitions/>
             </Container>
         </>
     )
