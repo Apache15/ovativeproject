@@ -6,7 +6,6 @@ import './binomial-pretest-calc.css';
 import eq1 from "./BiPretestEq1.png";
 import eq1Alt from "./BiPretestEq1Alt.png";
 
-//This push of the page does not contain any finalized styling, and I am aware the table containing formulas looks atrocious.  Future updates will cleanup display after the real formulas that will be displayed are included
 export default class BiPretest extends React.Component{
     constructor(props){
       super(props);
@@ -162,19 +161,12 @@ export default class BiPretest extends React.Component{
       if(field===1){this.setState({days: Math.ceil(val/this.state.dailyVisitors), weeks: Math.ceil((val/7)/this.state.dailyVisitors)});}
       if(field===2){this.setState({days: Math.ceil(this.state.sampleTotal/val), weeks: Math.ceil(this.state.sampleTotal/7/val)});}
     }
-    //Checks to confirm an input is a valid integer between 0-100
-    verifyInputPercentage(inputElement){ 
-        var retValue = 0;
-        try{
-            retValue = parseInt(inputElement.target.value);
-        }
-        catch(Exception){
-            retValue = -1;
-        }
-        if(retValue < 0) retValue = 0;
-        if(retValue > 100) retValue = 100;
-        return retValue;
-    }
+    //inputValid function from continuous-posttest-calc.js
+    inputValid(event, regex) {
+      if (!regex.test(event.key)) {
+          event.preventDefault();
+      }
+  }
 
     render(){
       return(
@@ -186,22 +178,22 @@ export default class BiPretest extends React.Component{
             <Box class="InputBox">
               <div class="BoxLabel">Inputs</div>
                 <Tooltip title={this.state.hidden === false ? <h2>The desired percent increase in metric for users receiving the variant versus the control group</h2> : ""} placement="right" arrow>
-                  <TextField label="Desired Lift" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="desiredLiftIn" type="decimal" InputProps={{ inputProps: { max: 100, min: 10 }}} onChange={this.processField1Change.bind(this)} 
-                  onFocus={this.updateField1DisplayA.bind(this)} onBlur={this.updateField1DisplayB.bind(this)} value={this.state.displayedDesiredLift}/>
+                  <TextField label="Desired Lift" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="desiredLiftIn" type="number" InputProps={{ inputProps: { max: 100, min: 10 }, endAdornment: <InputAdornment position="end">%</InputAdornment>}} onChange={this.processField1Change.bind(this)} 
+                  onFocus={this.updateField1DisplayA.bind(this)} onBlur={this.updateField1DisplayB.bind(this)} onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.displayedDesiredLift}/>
                 </Tooltip>
                 <Tooltip title={this.state.hidden === false ? <h2>The current conversion rate of successful actions taken divided by the number of visitors to the page</h2> : ""} placement="right" arrow> 
                   <TextField label="Baseline Conversion Rate, Control Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="convRateControl" type="number" onChange={this.processField2Change.bind(this)} 
-                  onFocus={this.updateField2DisplayA.bind(this)} onBlur={this.updateField2DisplayB.bind(this)} value={this.state.displayedConvRateControl}/>
+                  onFocus={this.updateField2DisplayA.bind(this)} onBlur={this.updateField2DisplayB.bind(this)} onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.displayedConvRateControl}/>
                 </Tooltip>
                 <Tooltip title={this.state.hidden === false ? <h2>The percentage of the total sample size that will use the control rather than the variant</h2> : ""} placement="right" arrow>
-                  <TextField label="Percentage of traffic in Control Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="trafficControl" endAdornment={<InputAdornment position="end">%</InputAdornment>} type="number" 
+                  <TextField label="Percentage of traffic in Control Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="trafficControl" InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} type="number" 
                   onChange={this.processField3Change.bind(this)} onFocus={this.updateFields3And4DisplayA.bind(this)}
-                  onBlur={this.updateFields3And4DisplayB.bind(this)} value={this.state.displayedTrafficControl}/> 
+                  onBlur={this.updateFields3And4DisplayB.bind(this)} onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.displayedTrafficControl}/> 
                 </Tooltip>
                 <Tooltip title={this.state.hidden === false ? <h2>The percentage of the total sample size that will use the variant rather than the control</h2> : ""} placement="right" arrow>
-                  <TextField label="Percentage of traffic in Variant Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="trafficVariant" endAdornment={<InputAdornment position="end">%</InputAdornment>} type="number" 
+                  <TextField label="Percentage of traffic in Variant Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="trafficVariant" InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} type="number" 
                   onChange={this.processField4Change.bind(this)} onFocus={this.updateFields3And4DisplayA.bind(this)}
-                  onBlur={this.updateFields3And4DisplayB.bind(this)} value={this.state.displayedTrafficVariant}/> 
+                  onBlur={this.updateFields3And4DisplayB.bind(this)} onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.displayedTrafficVariant}/> 
                 </Tooltip>
                 <Typography>Confidence Level</Typography>
                 <Tooltip title={this.state.hidden === false ? <h2>Suggested value range is 80% - 95%</h2> : ""} placement="right" arrow>
@@ -215,7 +207,7 @@ export default class BiPretest extends React.Component{
                   </Tooltip>
                   <Tooltip title={this.state.hidden === false ? <h2>The positive number of daily visitors participating in either the control or the variant group</h2> : ""} placement="right" arrow>
                 <TextField label="Total Number of Daily Visitors (both groups)" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="dailyVisit" type="number" onChange={this.processField7Change} onBlur={this.updateField7Value.bind(this)}
-                  value={this.state.dailyVisitors}/>                
+                  onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.dailyVisitors}/>                
                   </Tooltip>
             </Box>
             <Box class="OutputBox">
