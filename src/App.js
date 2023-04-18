@@ -1,5 +1,5 @@
 import './App.css';
-import { Button, Toolbar, AppBar, Box, ThemeProvider, createTheme, Table } from '@mui/material'
+import { Button, Toolbar, AppBar, Box, ThemeProvider, createTheme } from '@mui/material'
 import { useState, useEffect } from 'react';
 import ContinuousPreTestCalculator from './continuous-calculator/continuousPreTest';
 import BinomialPostTestCalculator from './binomial-posttest-calculator/binomial-posttest-calc';

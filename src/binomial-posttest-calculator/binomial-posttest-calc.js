@@ -1,4 +1,4 @@
-import { TextField, InputAdornment, FormControl, Box, Tooltip, Button, Slider, TableRow, Table, TableHead, TableCell, TableContainer, Paper } from "@mui/material";
+import { TextField, InputAdornment, FormControl, Box, Tooltip, Slider, TableRow, Table, TableHead, TableCell, TableContainer, Paper } from "@mui/material";
 import "./binomial-posttest-calc.css"
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -8,9 +8,14 @@ import React, { useState } from "react";
 import norminv from 'norminv';
 import testStatImg from './testStat.png'
 import confIntervalImg from './confInterval.png'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 export default function BinomialPostTestCalculator() {
-    const [isDetailed, setDetail] = useState(true);
+    //const [isDetailed, setDetail] = useState(true);
+    const [expanded, setExpanded] = React.useState(false);
+    const handleChange = (panel) => (event, isExpanded) => {
+        setExpanded(isExpanded ? panel : false);
+    };
     const [formData, setData] = useState({
         conVarInput: 0,
         trafficVarInput: 0,
@@ -38,8 +43,8 @@ export default function BinomialPostTestCalculator() {
     const pValue = 2 * (1 - ncdf(Math.abs(testSatistic), 0, 1));
     const confIntDiffHigh = ((formData.conVarInput / formData.trafficVarInput) - (formData.conControlInput / formData.trafficControlInput)) + (norminv(1 - ((1 - formData.confidenceLevel * 0.01) / 2), 0, 1) * (Math.sqrt((((formData.conVarInput / formData.trafficVarInput) * (1 - (formData.conVarInput / formData.trafficVarInput))) / formData.trafficVarInput) + (((formData.conControlInput / formData.trafficControlInput) * (1 - (formData.conControlInput / formData.trafficControlInput))) / formData.trafficControlInput))));
     const confIntDiffLow = ((formData.conVarInput / formData.trafficVarInput) - (formData.conControlInput / formData.trafficControlInput)) - (norminv(1 - ((1 - formData.confidenceLevel * 0.01) / 2), 0, 1) * (Math.sqrt((((formData.conVarInput / formData.trafficVarInput) * (1 - (formData.conVarInput / formData.trafficVarInput))) / formData.trafficVarInput) + (((formData.conControlInput / formData.trafficControlInput) * (1 - (formData.conControlInput / formData.trafficControlInput))) / formData.trafficControlInput))));
-    const confIntLiftLow = confIntDiffLow / (formData.conControlInput / formData.trafficControlInput);
-    const confIntLiftHigh = confIntDiffHigh / (formData.conControlInput / formData.trafficControlInput);
+    //const confIntLiftLow = confIntDiffLow / (formData.conControlInput / formData.trafficControlInput);
+    //const confIntLiftHigh = confIntDiffHigh / (formData.conControlInput / formData.trafficControlInput);
 
 
     const rejectHypothesis = (pValue <= (1 - (+formData.confidenceLevel / 100)));
@@ -71,21 +76,21 @@ export default function BinomialPostTestCalculator() {
     }
     return (
         <div className="bodyContainer">
+            {/*
             <Button sx={{ mb: "15px" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button>
+            */}
             <div className="container">
                 <Box className="Input-form-box">
                     <div className="Form-title">Insert Numbers Here</div>
                     <FormControl>
-
                         <TextField
                             sx={{ m: 1 }}
                             className="numConversionsVariant"
                             variant="standard"
-                            required={true}
                             placeholder="50"
                             type="number"
                             name="conVarInput"
-                            label="Number of Conversions, Variant"
+                            label={"Number of Conversions, Variant"}
                             InputLabelProps={{ shrink: true }}
                             onChange={inputChange}
                             onKeyPress={(event) => {
@@ -96,14 +101,13 @@ export default function BinomialPostTestCalculator() {
 
 
                         <TextField
-                            sx={{ m: 1 ,'& .MuiFormControlLabel-label': { fontSize: '50px' } }}
+                            sx={{ m: 1, '& .MuiFormControlLabel-label': { fontSize: '50px' } }}
                             className="totalTrafficVariant"
                             variant="standard"
-                            required={true}
                             placeholder="1000"
                             type="number"
                             name="trafficVarInput"
-                            label="Total Traffic Variant"
+                            label="Total Traffic, Variant"
                             onChange={inputChange}
                             onKeyPress={(event) => {
                                 inputValid(event, /[0-9]/);
@@ -117,7 +121,6 @@ export default function BinomialPostTestCalculator() {
                             sx={{ m: 1 }}
                             className="numberOfConversionsControl"
                             variant="standard"
-                            required={true}
                             placeholder="35"
                             type="number"
                             name="conControlInput"
@@ -134,7 +137,6 @@ export default function BinomialPostTestCalculator() {
                             sx={{ m: 1 }}
                             className="totalTrafficControl"
                             variant="standard"
-                            required={true}
                             placeholder="1000"
                             type="number"
                             name="trafficControlInput"
@@ -148,7 +150,7 @@ export default function BinomialPostTestCalculator() {
                         </TextField>
 
                         <TextField
-                            sx={{ m: 1  }}
+                            sx={{ m: 1 }}
                             name="testDuration"
                             className="testDuration"
                             variant="standard"
@@ -162,26 +164,25 @@ export default function BinomialPostTestCalculator() {
                             InputLabelProps={{ shrink: true }}
                         >
                         </TextField>
-                        <Typography color="grey">Confidence Level</Typography>
-                        <Tooltip open={isDetailed} title={"Enter a value between 80-99. Typically, 95"} placement="left" >
-                            
-                            <Slider
-                                name="confidenceLevel"
-                                aria-label="Confidence Level"
-                                defaultValue={95}
-                                valueLabelDisplay="auto"
-                                step={1}
-                                marks
-                                min={80}
-                                max={99}
-                                onChange={inputChange}
-                            />
+                        <Tooltip title={"Enter a value between 80-99. Typically, 95"} placement="left" >
+                            <Typography color="grey"><InfoOutlinedIcon /> Number of Conversions, Variant</Typography>
                         </Tooltip>
+                        <Slider
+                            name="confidenceLevel"
+                            aria-label="Confidence Level"
+                            defaultValue={95}
+                            valueLabelDisplay="auto"
+                            step={1}
+                            marks
+                            min={80}
+                            max={99}
+                            onChange={inputChange}
+                        />
+
                     </FormControl>
                 </Box>
                 <Box className="Input-form-box">
                     <div className="Form-title">Conversion Rates</div>
-
                     <TextField
                         sx={{ m: 1 }}
                         className="desiredLift"
@@ -199,7 +200,6 @@ export default function BinomialPostTestCalculator() {
                         InputLabelProps={{ shrink: true }}
                     >
                     </TextField>
-
                     <TextField
                         sx={{ m: 1 }}
                         className="desiredLift"
@@ -217,8 +217,7 @@ export default function BinomialPostTestCalculator() {
                         InputLabelProps={{ shrink: true }}
                     >
                     </TextField>
-
-                    <Tooltip title={isDetailed === true ? <span ><div style={{ color: "white" }}>If Greater than Zero, Variant has higher conversion rate.</div> <div style={{ color: "white" }}>If Less than Zero, Control has higher conversion rate.</div></span> : ""} placement="left">
+                    <Tooltip title={<span ><div style={{ color: "white" }}>If Greater than Zero, Variant has higher conversion rate.</div> <div style={{ color: "white" }}>If Less than Zero, Control has higher conversion rate.</div></span>} placement="left">
                         <TextField
                             sx={{ m: 1 }}
                             className="desiredLift"
@@ -256,8 +255,8 @@ export default function BinomialPostTestCalculator() {
                     </TextField>
                 </Box>
                 <Box className="Input-form-box">
-                    <div hidden={rejectHypothesis} style={{ color: "black", backgroundColor: "#b05d5d" }}>Fail to reject null hypothesis.</div>
-                    <div hidden={!rejectHypothesis} style={{ color: "black", backgroundColor: "#6eb05d" }}>Reject null hypothesis</div>
+                    <div hidden={rejectHypothesis} style={{ color: "black", backgroundColor: "#b05d5d" }}>No significant difference</div>
+                    <div hidden={!rejectHypothesis} style={{ color: "black", backgroundColor: "#6eb05d" }}>Test is statistically significant</div>
                     <TableContainer>
                         <Table>
                             <TableRow><TableCell style={{ textAlign: "center" }} colSpan={2}><b><i>Checking Assumptions</i></b></TableCell></TableRow>
@@ -265,22 +264,26 @@ export default function BinomialPostTestCalculator() {
                         </Table>
                     </TableContainer>
                     <div></div>
-                    <Accordion>
+                    <Accordion onChange={handleChange('panel1')} expanded={expanded === 'panel1'}>
                         <AccordionSummary
                             expandIcon={"▼"}
                             aria-controls="panel3a-content"
                             id="panel3a-header"
+
                         ><Typography>Additional Interpretations</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
-
+                            <Typography hidden={rejectHypothesis}>No significant difference.</Typography>
+                            <Typography hidden={!rejectHypothesis}>{conRateDifference > 0 ? "The Variant performed significantly better than the Control" : "The Control performed significantly better than the Variant"}</Typography>
+                            <Typography hidden={!rejectHypothesis}>{conRateDifference > 0 ? "We are " + (1 - (1 - (0.01 * +formData.confidenceLevel)) / 2) * 100 + "% confident that the Variant will perform " + (100 * confIntDiffLow).toPrecision(4) + "% to " + (100 * confIntDiffHigh).toPrecision(4) + "% better than the Control" : "We are " + (1 - (1 - (0.01 * +formData.confidenceLevel)) / 2) * 100 + "% confident that the Control will perform " + Math.abs(100 * confIntDiffLow).toPrecision(4) + "% to " + Math.abs(100 * confIntDiffHigh).toPrecision(4) + "% better than the Variant"}</Typography>
                         </AccordionDetails>
                     </Accordion>
-                    <Accordion >
+                    <Accordion onChange={handleChange('panel2')} expanded={expanded === 'panel2'}>
                         <AccordionSummary
                             expandIcon={"▼"}
                             aria-controls="panel3a-content"
                             id="panel3a-header"
+
                         >
                             <Typography>More Results</Typography>
                         </AccordionSummary>
