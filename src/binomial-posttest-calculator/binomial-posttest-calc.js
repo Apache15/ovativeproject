@@ -316,6 +316,7 @@ export default function BinomialPostTestCalculator() {
                         }>
                             <img src={testStatImg} width="30%" height="auto" alt="test statistic equation" />
                         </Tooltip>
+                        <InfoOutlinedIcon />
                         <div>Confidence Interval: </div>
                         <Tooltip title={
                             <React.Fragment>
@@ -324,6 +325,7 @@ export default function BinomialPostTestCalculator() {
                         }>
                             <img src={confIntervalImg} width="30%" height="auto" alt="test statistic equation" />
                         </Tooltip>
+                        <InfoOutlinedIcon />
                     </div>
                 </Accordion>
             </Box>

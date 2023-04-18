@@ -38,7 +38,7 @@ export default function ContinuousPreTestCalculator() {
     }
 
     return (
-        <>
+        <div className='body-container'>
             <Button sx={{ml:"50px",mt:"50px"}} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button>
             <div className="container">
                 <Box className="Input-form-box">
@@ -326,6 +326,6 @@ export default function ContinuousPreTestCalculator() {
                     </TextField>
                 </Box>
             </div>
-        </>
+        </div>
     )
 }

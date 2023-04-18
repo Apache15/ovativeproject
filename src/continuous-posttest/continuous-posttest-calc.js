@@ -87,7 +87,7 @@ export default function ContPostTest() {
     };
 
     return (
-        <>
+        <div className='body-container'>
             <Container maxWidth="xl" sx={{ paddingBottom: "4ch" }}>
                 {/* <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltip Detail</Button> */}
                 <div className="container">
@@ -353,7 +353,7 @@ export default function ContPostTest() {
                 <ContinousFormulas params={inputs} pooledstd={SP} satisfied={conditionSatisfied}/>
                 <ContinuousDefinitions/>
             </Container>
-        </>
+        </div>
     )
 }
 

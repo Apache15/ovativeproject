@@ -170,7 +170,7 @@ export default class BiPretest extends React.Component{
 
     render(){
       return(
-        <div>
+        <div className='body-container'>
         <div class="Button">
           <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="changeDetail" variant="contained" onClick={this.changeDetail.bind(this)}>Toggle Tooltips</Button>
         </div>
