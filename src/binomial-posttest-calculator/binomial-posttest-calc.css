@@ -14,7 +14,17 @@
       opacity: 100%;
     }
   }
+<<<<<<< HEAD
 
+=======
+  li{
+    font-size:15px
+  }
+.header{
+  text-align: center;
+  font-weight:bold;
+}
+>>>>>>> main
 .desiredLift {
     background-color: white;
 }
@@ -25,6 +35,10 @@
 }
 .bodyContainer{
     animation: .25s ease-out 0s 1 fade-in;
+<<<<<<< HEAD
+=======
+    padding-bottom: 50px;
+>>>>>>> main
 }
 .Input-form-box{
     display:flex;
@@ -37,9 +51,23 @@
     width:25%;
     height:auto;
 }
+<<<<<<< HEAD
+=======
+.Line-box{
+  padding:5px;
+  margin-bottom: 10px;
+  border-color: black;
+  border-style:solid;
+  border-radius: 10px;
+}
+>>>>>>> main
 .Form-title{
     font-size:20px;
     color:black;
     padding-left: 5px;
     padding-bottom: 10px;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> main

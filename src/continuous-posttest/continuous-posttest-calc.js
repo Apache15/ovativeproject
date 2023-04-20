@@ -5,13 +5,21 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ContinousFormulas from './continous-posttest-formulas';
+<<<<<<< HEAD
+=======
+import ContinuousDefinitions from '../continuous-definitions/continuousDefinitions';
+>>>>>>> main
 
 
 export default function ContPostTest() {
 
     const [isDetailed, setDetail] = useState(true); //toggle tooltip state
+<<<<<<< HEAD
     const [conclusion, setConclusion] = useState(""); //Reject or failed to reject string state
     const [daysNeeded, setDaysNeeded] = useState();
+=======
+    const [daysNeeded, setDaysNeeded] = useState(0);
+>>>>>>> main
 
     const [inputs, setInputs] = useState({ //input states
         avgRevVar: 0,
@@ -36,12 +44,22 @@ export default function ContPostTest() {
             });
         }
         // console.log(1-(1-(((.01*++inputs.confidenceLvl)/2))))
+<<<<<<< HEAD
         console.log(calcDays())
         if (conclusion === "Statistically significant" || conclusion === "There is evidence the revenues of the 2 groups is different") {
             setDaysNeeded(0);
         }
         else {
             setDaysNeeded(calcDays());
+=======
+        console.log(+daysNeeded)
+        if (!reject) {
+            calcDays()
+            //setDaysNeeded(0);
+        }
+        else {
+           calcDays()
+>>>>>>> main
         }
     };
 
@@ -52,6 +70,7 @@ export default function ContPostTest() {
         }
     }
 
+<<<<<<< HEAD
     //Set the conclusion text based on the our calculated values and level of detail
     const doConclusion = () => {
         if (+pVal <= (1 - (+inputs.confidenceLvl / 100)) && isDetailed === true) {
@@ -67,22 +86,57 @@ export default function ContPostTest() {
             setConclusion("not enough evidence that the revenues of both groups are different");
         }
     }
+=======
+    //Pooled Standard Deviation
+    const bottom = (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2); //These are bad names I know, they refer to the denominator and both parts of the numerator
+    const topLeft = (+inputs.sampleSizeVar - 1) * Math.pow(+inputs.stdDevVar, 2);
+    const topRight = ((+inputs.sampleSizeCtrl - 1) * Math.pow(+inputs.stdDevCtrl, 2));
+    const SP = (Math.sqrt((topRight + topLeft) / bottom));
+
+    //Set the conclusion text based on the our calculated values and level of detail
+    // const doConclusion = () => {
+    //     if (+pVal <= (1 - (+inputs.confidenceLvl / 100)) && isDetailed === true) {
+    //         setConclusion("Statistically significant");
+    //     }
+    //     else if (+pVal > (1 - (+inputs.confidenceLvl / 100)) && isDetailed === true) {
+    //         setConclusion("Not statistically significant");
+    //     }
+    //     else if (+pVal <= (1 - (+inputs.confidenceLvl / 100)) && isDetailed === false) {
+    //         setConclusion("There is evidence the revenues of the 2 groups is different");
+    //     }
+    //     else {
+    //         setConclusion("not enough evidence that the revenues of both groups are different");
+    //     }
+    // }
+>>>>>>> main
 
 
     //margin of error used in the calculations of the confidence intervals
     function marginOfError() { //used in the calculation of the confidence interval
         const tScore = jstat.studentt.inv(1 - (1 - +inputs.confidenceLvl / 100) / 2, (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2))
+<<<<<<< HEAD
         const standardError = (calcSP() * Math.sqrt((1 / +inputs.sampleSizeCtrl) + (1 / +inputs.sampleSizeVar)))
+=======
+        const standardError = (SP * Math.sqrt((1 / +inputs.sampleSizeCtrl) + (1 / +inputs.sampleSizeVar)))
+>>>>>>> main
         return (+tScore * +standardError);
     }
 
     //Calculates the number of additional days needed for testing
     function calcDays() {
+<<<<<<< HEAD
         const p = (1 - (1 - (((.01 * + +inputs.confidenceLvl) / 2)))) //error possibly here
         const part1 = Math.pow(+inputs.sampleSizeCtrl / +inputs.sampleSizeVar, -1);
         const part2 = (calcSP() * ((jstat.normal.inv(+p, 0, 1)) + jstat.normal.inv(.8, 0, 1)) / +avgRevDif) //I think error is here
         const part3 = (+lift / +inputs.testDuration) //percentage conversion for lift may cause and issue
         return (Math.ceil((1 + (+part1 * +part2)) / +part3) - +inputs.testDuration)
+=======
+        const p = (1 - (1 - (((.01 * + +inputs.confidenceLvl) / 2))))
+        const part1 = Math.pow(+inputs.sampleSizeCtrl / +inputs.sampleSizeVar, -1);
+        const part2 = (SP * ((jstat.normal.inv(+p, 0, 1)) + jstat.normal.inv(.8, 0, 1)) / +avgRevDif) //I think error is here
+        const part3 = (+lift / +inputs.testDuration) //percentage conversion for lift may cause and issue
+        setDaysNeeded((Math.ceil((1 + (+part1 * +part2)) / +part3) - +inputs.testDuration)) 
+>>>>>>> main
     }
 
     //confidence interval calculations
@@ -90,7 +144,11 @@ export default function ContPostTest() {
     const confidenceIntevalLower = +avgRevDif - marginOfError();
 
     //Test statistic calculations
+<<<<<<< HEAD
     const denominatorTS = (calcSP() * Math.sqrt(((1 / +inputs.sampleSizeCtrl) + (1 / +inputs.sampleSizeVar))));
+=======
+    const denominatorTS = (SP * Math.sqrt(((1 / +inputs.sampleSizeCtrl) + (1 / +inputs.sampleSizeVar))));
+>>>>>>> main
     const testStat = (+avgRevDif / +denominatorTS).toFixed(3);
 
     //calculate the pooled standard deviation
@@ -102,6 +160,7 @@ export default function ContPostTest() {
         return SP;
     }
 
+<<<<<<< HEAD
     //checks to see if they confidencelvl input is between 80 and 99.9
     function checkCLValid(input) {
         if (+input < 80 || +input > 99.9) {
@@ -111,6 +170,8 @@ export default function ContPostTest() {
             return false;
         }
     }
+=======
+>>>>>>> main
 
     //p value calculation using the jstat library https://jstat.github.io/distributions.html#jStat.studentt.pdf
     const pVal = jstat.studentt.pdf(+testStat, (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2), 2).toFixed(2);
@@ -361,8 +422,13 @@ export default function ContPostTest() {
                         </FormControl>
                     </Box>
                     <Box className='Input-form-box' boxShadow='2px 3px 3px'>
+<<<<<<< HEAD
                         <div hidden={reject} style={{ color: "black", backgroundColor: "#b05d5d" }}>Test inconclusive </div>
                         <div hidden={!reject} style={{ color: "black", backgroundColor: "#6eb05d" }}>Is statistically significant</div>
+=======
+                        <div hidden={reject} style={{ color: "red", backgroundColor: "#b05d5d", fontWeight: 'bold' }}>Test inconclusive </div>
+                        <div hidden={!reject} style={{ color: "green", backgroundColor: "#6eb05d", fontWeight: 'bold'}}>Is statistically significant</div>
+>>>>>>> main
                         <Accordion>
                             <AccordionSummary
                                 expandIcon={"▼"}
@@ -380,6 +446,10 @@ export default function ContPostTest() {
                     </Box>
                 </div>
                 <ContinousFormulas />
+<<<<<<< HEAD
+=======
+                <ContinuousDefinitions/>
+>>>>>>> main
             </Container>
         </>
     )
