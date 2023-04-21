@@ -5,3 +5,42 @@
 div{
     color:black;
 }
+.description{
+    width:50%;
+}
+td{
+    width:fit-content;
+}
+tr{
+    text-align:center;
+}
+sup { 
+    vertical-align: top; 
+    font-size: 0.6em; 
+}
+.InputBox, .OutputBox{
+    display:flex;
+    padding:20px;
+    justify-content: space-between;
+    flex-direction: column;
+    border-color:black;
+    border-style:solid;
+    border-radius: 10px;
+    width:25%;
+    height:auto;
+}
+.BoxLabel{
+    font-size:20px;
+    color:black;
+    padding-left: 5px;
+    padding-bottom: 10px;
+}
+.BodyContainers {
+    display: flex;
+    text-align: center;
+    justify-content: space-between;
+}
+
+Tooltip{
+    font: 1000;
+}

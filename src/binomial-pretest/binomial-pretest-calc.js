@@ -1,18 +1,19 @@
 import React from 'react';
 import jStat from 'jstat';
-import { TextField, Input, InputAdornment } from '@mui/material';
+import { TextField, InputAdornment, Box, FormControl, Typography, Slider, Button, Accordion, AccordionDetails, Grid, AccordionSummary } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import './binomial-pretest-calc.css';
+import eq1 from "./BiPretestEq1.png";
+import eq1Alt from "./BiPretestEq1Alt.png";
 
-//This push of the page does not contain any finalized styling, and I am aware the table containing formulas looks atrocious.  Future updates will cleanup display after the real formulas that will be displayed are included
 export default class BiPretest extends React.Component{
     constructor(props){
       super(props);
       this.processField6Change = this.processField6Change.bind(this);
       this.processField7Change = this.processField7Change.bind(this);
-      this.state = {hidden: true, desiredLift: 42.86, displayedDesiredLift: 42.86, convRateControl: 3.5, displayedConvRateControl: 3.5, convRateVariant: 5, displayedConvRateVariant: 5, 
+      this.state = {hidden: false, desiredLift: 42.86, displayedDesiredLift: 42.86, convRateControl: 3.5, displayedConvRateControl: 3.5, convRateVariant: 5, displayedConvRateVariant: 5, 
         trafficControl: 50, displayedTrafficControl: 50, trafficVariant: 50, displayedTrafficVariant: 50, trafficRatio: 1, displayedTrafficRatio: 1, confLevel: 90, 
-        displayedConfLevel: 90, statPower: 80, displayedStatePower: 80, dailyVisitors: 600, sampleVariant: 2234, sampleControl: 2234, sampleTotal: 4468, days: 8, weeks: 2}
+        statPower: 80, displayedStatePower: 80, dailyVisitors: 600, sampleVariant: 2234, sampleControl: 2234, sampleTotal: 4468, days: 8, weeks: 2}
     }
     //Handles Showing/Hiding detailed information
     changeDetail(){
@@ -82,10 +83,13 @@ export default class BiPretest extends React.Component{
     }
     //Handles changes made to the "Percentage Traffic Variant Group" Text Field
     processField4Change(inputElement){
-      var newVal = inputElement.target.value;
-      if(newVal<0) newVal = 0;
-      if(newVal>100) newVal = 100;
-      this.setState({trafficVariant: newVal, trafficControl: 100*(1 - (.01*newVal)), trafficRatio: (100*(1 - (.01*newVal)))/newVal});
+      var newVar = inputElement.target.value;
+      if(newVar<0) newVar = 0;
+      if(newVar>100) newVar = 100;
+      var newCont = 100*(1 - (.01*newVar));
+      this.setState({trafficVariant: newVar, trafficControl: newCont, displayedTrafficVariant: newVar, displayedTrafficControl: newCont, 
+        trafficRatio: newCont/newVar, displayedTrafficRaiot: Math.round(newCont*100/newVar)/100});
+        this.calculateSampleSizes(newCont,newVar, 0, 3);
     }
     //Displays the full values upon selection of either TextField
     updateFields3And4DisplayA(){
@@ -102,19 +106,6 @@ export default class BiPretest extends React.Component{
         var newVal = inputElement.target.value;
         this.setState({confLevel: newVal, displayedConfLevel: newVal});
         this.calculateSampleSizes(newVal, 0, 5);
-    }
-    //Displays the full value upon selection of the TextField
-    updateField5DisplayA(){
-      this.setState({displayedConfLevel: this.state.confLevel});
-    }
-    //Displays the rounded value upon selection off the TextField
-    updateField5DisplayB(){
-      var newVal = this.state.confLevel;
-      if(newVal > 99.9){newVal = 99.9;}
-      if(newVal < 80){newVal = 80;}
-      var newDisp = Math.round(newVal*100)/100;
-      this.setState({confLevel: newVal, displayedConfLevel: newDisp});
-      this.calculateSampleSizes(newVal, 0, 5);
     }
     //Handles changes made to the "Statistical Power" TextField
     processField6Change(inputElement){
@@ -170,141 +161,127 @@ export default class BiPretest extends React.Component{
       if(field===1){this.setState({days: Math.ceil(val/this.state.dailyVisitors), weeks: Math.ceil((val/7)/this.state.dailyVisitors)});}
       if(field===2){this.setState({days: Math.ceil(this.state.sampleTotal/val), weeks: Math.ceil(this.state.sampleTotal/7/val)});}
     }
-    //Checks to confirm an input is a valid integer between 0-100
-    verifyInputPercentage(inputElement){ 
-        var retValue = 0;
-        try{
-            retValue = parseInt(inputElement.target.value);
-        }
-        catch(Exception){
-            retValue = -1;
-        }
-        if(retValue < 0) retValue = 0;
-        if(retValue > 100) retValue = 100;
-        return retValue;
-    }
+    //inputValid function from continuous-posttest-calc.js
+    inputValid(event, regex) {
+      if (!regex.test(event.key)) {
+          event.preventDefault();
+      }
+  }
+
     render(){
       return(
         <div>
-          <div class="Button">
-            <button id="changeDetail" onClick={this.changeDetail.bind(this)}>Show Detail</button>
-          </div>
-          <div class="Inputs">
-            <h1>Inputs</h1>
-            <div>
-              <label htmlFor="desiredLiftIn">
-                Desired Lift
-              </label>
-              <TextField id="desiredLiftIn" sx={{input:{color:"white"}}} type="decimal" InputProps={{ inputProps: { max: 100, min: 10 }}} onChange={this.processField1Change.bind(this)} 
-              onFocus={this.updateField1DisplayA.bind(this)} onBlur={this.updateField1DisplayB.bind(this)} value={this.state.displayedDesiredLift}/>
-            </div>
-            <div>
-              <label htmlFor="convRateControl">
-                Baseline Conversion Rate, Control Group
-              </label>
-              <TextField id="convRateControl" sx={{input:{color:"white"}}} type="number" onChange={this.processField2Change.bind(this)} 
-              onFocus={this.updateField2DisplayA.bind(this)} onBlur={this.updateField2DisplayB.bind(this)} value={this.state.displayedConvRateControl}/>
-            </div>
-            <div>
-              <label htmlFor="trafficControl">
-                Percentage of traffic in Control Group 		
-              </label>
-              <Input id="trafficControl" endAdornment={<InputAdornment position="end">%</InputAdornment>} sx={{input:{color:"white"}}} type="number" 
-              onChange={this.processField3Change.bind(this)} onFocus={this.updateFields3And4DisplayA.bind(this)}
-              onBlur={this.updateFields3And4DisplayB.bind(this)} value={this.state.displayedTrafficControl}/> 
-            </div>
-            <div>
-              <label htmlFor="trafficVariant">
-                Percentage of traffic in Variant Group 		
-              </label>
-              <Input id="trafficVariant" endAdornment={<InputAdornment position="end">%</InputAdornment>} sx={{input:{color:"white"}}} type="number" 
-              onChange={this.processField4Change.bind(this)} onFocus={this.updateFields3And4DisplayA.bind(this)}
-              onBlur={this.updateFields3And4DisplayB.bind(this)} value={this.state.displayedTrafficVariant}/> 
-            </div>
-            <div>
-              <label htmlFor="confiLevel">
-                Confidence Level 		
-              </label>
-              <Tooltip title="Please enter a confidence level between 80 - 99.9%">
-                <Input id="confiLevel" endAdornment={<InputAdornment position="end">%</InputAdornment>} sx={{input:{color:"white"}}} type="number" 
-                onChange={this.processField5Change.bind(this)} onFocus={this.updateField5DisplayA.bind(this)} onBlur={this.updateField5DisplayB.bind(this)} 
-                value={this.state.displayedConfLevel}/>
+        <div class="Button">
+          <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="changeDetail" variant="contained" onClick={this.changeDetail.bind(this)}>Toggle Tooltips</Button>
+        </div>
+          <div class="BodyContainers">
+            <Box class="InputBox">
+              <div class="BoxLabel">Inputs</div>
+                <Tooltip title={this.state.hidden === false ? <h2>The desired percent increase in metric for users receiving the variant versus the control group</h2> : ""} placement="right" arrow>
+                  <TextField label="Desired Lift" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="desiredLiftIn" type="number" InputProps={{ inputProps: { max: 100, min: 10 }, endAdornment: <InputAdornment position="end">%</InputAdornment>}} onChange={this.processField1Change.bind(this)} 
+                  onFocus={this.updateField1DisplayA.bind(this)} onBlur={this.updateField1DisplayB.bind(this)} onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.displayedDesiredLift}/>
+                </Tooltip>
+                <Tooltip title={this.state.hidden === false ? <h2>The current conversion rate of successful actions taken divided by the number of visitors to the page</h2> : ""} placement="right" arrow> 
+                  <TextField label="Baseline Conversion Rate, Control Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="convRateControl" type="number" onChange={this.processField2Change.bind(this)} 
+                  onFocus={this.updateField2DisplayA.bind(this)} onBlur={this.updateField2DisplayB.bind(this)} onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.displayedConvRateControl}/>
+                </Tooltip>
+                <Tooltip title={this.state.hidden === false ? <h2>The percentage of the total sample size that will use the control rather than the variant</h2> : ""} placement="right" arrow>
+                  <TextField label="Percentage of traffic in Control Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="trafficControl" InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} type="number" 
+                  onChange={this.processField3Change.bind(this)} onFocus={this.updateFields3And4DisplayA.bind(this)}
+                  onBlur={this.updateFields3And4DisplayB.bind(this)} onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.displayedTrafficControl}/> 
+                </Tooltip>
+                <Tooltip title={this.state.hidden === false ? <h2>The percentage of the total sample size that will use the variant rather than the control</h2> : ""} placement="right" arrow>
+                  <TextField label="Percentage of traffic in Variant Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="trafficVariant" InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} type="number" 
+                  onChange={this.processField4Change.bind(this)} onFocus={this.updateFields3And4DisplayA.bind(this)}
+                  onBlur={this.updateFields3And4DisplayB.bind(this)} onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.displayedTrafficVariant}/> 
+                </Tooltip>
+                <Typography>Confidence Level</Typography>
+                <Tooltip title={this.state.hidden === false ? <h2>Suggested value range is 80% - 95%</h2> : ""} placement="right" arrow>
+                  <Slider name="confiLevel" aria-label="Confidence Level" value={this.state.confLevel} valueLabelDisplay="auto" label='Confidence Level'
+                    step={1} marks min={80} max={99} onChange={this.processField5Change.bind(this)}/>
+                </Tooltip>
+                  <Typography>Statistical Power</Typography>
+                  <Tooltip title={this.state.hidden === false ? <h2>Statistical Power is typically 80%</h2> : ""} placement="right" arrow>
+                    <Slider name="statsPower" aria-label="Statistical Power" value={this.state.statPower} valueLabelDisplay="auto" label='Confidence Level'
+                      step={1} marks min={80} max={99} onChange={this.processField6Change.bind(this)}/>
+                  </Tooltip>
+                  <Tooltip title={this.state.hidden === false ? <h2>The positive number of daily visitors participating in either the control or the variant group</h2> : ""} placement="right" arrow>
+                <TextField label="Total Number of Daily Visitors (both groups)" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="dailyVisit" type="number" onChange={this.processField7Change} onBlur={this.updateField7Value.bind(this)}
+                  onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.dailyVisitors}/>                
+                  </Tooltip>
+            </Box>
+            <Box class="OutputBox">
+              <div class="BoxLabel">Outputs</div>
+              <Tooltip title={this.state.hidden === false ? <h2>The conversion rate for the variant group required to meet the desired lift of the baseline conversion rate</h2> : ""} placement="left" arrow>
+                <TextField label="Conversion Rate, Variant Group" variant="filled" sx={{ m: 1}} InputProps={{color: "black",endAdornment: <InputAdornment position="end">%</InputAdornment>,readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
+                  InputLabelProps={{ shrink: true }} id="convRateVariant" type="number" value={this.state.displayedConvRateVariant}/>
               </Tooltip>
-            </div>
-            <div>
-              <label htmlFor="statsPower">
-                Statistical Power 			
-              </label>
-              <Tooltip title="Statistical Power is typically 80%">
-                <Input id="statsPower" endAdornment={<InputAdornment position="end">%</InputAdornment>} sx={{input:{color:"white"}}} type="number" 
-                onChange={this.processField6Change} onFocus={this.updateField6DisplayA.bind(this)} onBlur={this.updateField6DisplayB.bind(this)} value={this.state.statPower}/>
+              <Tooltip title={this.state.hidden === false ? <h2>The % of traffic in the control group divided by the % of traffic in the variant group</h2> : ""} placement="left" arrow>
+                <TextField label="Ratio of the two group traffic sizes" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
+                  InputLabelProps={{ shrink: true }} id="trafficSizeRatio" type="number" value={this.state.displayedTrafficRatio}/>
               </Tooltip>
-            </div>
-            <div>
-              <label htmlFor="dailyVisit">
-                Total Number of Daily Visitors (both groups)			
-              </label>
-              <TextField id="dailyVisit" sx={{input:{color:"white"}}} type="number" onChange={this.processField7Change} onBlur={this.updateField7Value.bind(this)}
-              value={this.state.dailyVisitors}/>
-            </div>
+              <Tooltip title={this.state.hidden === false ? <h2>The sample size required for the variant group, rounded up</h2> : ""} placement="left" arrow>
+                <TextField label="Sample Size, Variant" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
+                  InputLabelProps={{ shrink: true }} id="sampleVariant" type="number" value={this.state.sampleVariant}/>
+              </Tooltip>
+              <Tooltip title={this.state.hidden === false ? <h2>The sample size required for the control group, rounded up</h2> : ""} placement="left" arrow>
+                <TextField label="Sample Size, Control" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
+                  InputLabelProps={{ shrink: true }} id="sampleControl" type="number" value={this.state.sampleControl}/>
+              </Tooltip>
+              <Tooltip title={this.state.hidden === false ? <h2>The variant sample size plus the control sample size</h2> : ""} placement="left" arrow>
+                <TextField label="Total Sample Size" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
+                  InputLabelProps={{ shrink: true }} id="sampleTotal" type="number" value={this.state.sampleTotal}/>
+                </Tooltip>
+              <Tooltip title={this.state.hidden === false ? <h2>The number of days the test will take to run, rounded up</h2> : ""} placement="left" arrow>
+                <TextField label="Days to run the test" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
+                  InputLabelProps={{ shrink: true }} id="days" type="number" value={this.state.days}/>
+              </Tooltip>
+              <Tooltip title={this.state.hidden === false ? <h2>The number of weeks the test will take to run, rounded up</h2> : ""} placement="left" arrow>
+                <TextField label="Weeks to run the test" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
+                  InputLabelProps={{ shrink: true }} id="weeks" type="number" value={this.state.weeks}/>
+              </Tooltip>
+            </Box> 
           </div>
-          <div class="Outputs"> 
-            <h1>Outputs</h1>
-            <div id = "convRateVariant">
-              Conversion Rate, Variant Group: {this.state.displayedConvRateVariant}%
-            </div>
-            <div id = "trafficSizeRatio">
-              Ratio of the two group traffic sizes: {this.state.displayedTrafficRatio}
-            </div>
-            <div id = "sampleVariant">
-              Sample Size, Variant: {this.state.sampleVariant}
-            </div>
-            <div id = "sampleControl">
-              Sample Size, Control: {this.state.sampleControl}
-            </div>
-            <div id = "sampleTotal">
-              Total Sample Size: {this.state.sampleTotal}
-            </div>
-            <div id = "days">
-              Days to run the test: {this.state.days}
-            </div>
-            <div id = "weeks">
-              Weeks to run the test: {this.state.weeks}
-            </div>
-          </div> 
-            <div style={{display: this.state.hidden ? 'none' : 'block'}}>
-              <h1>Testing Formulas</h1>
-              <p>Formulas used to calculate sample size (traffic) on "Pre-Test Calculator" Sheet</p>
-              <table>
-                <tr>
-                  <table>
-                    <td><h2>Kappa</h2></td>
-                    <td>Created Formula will be here</td>
-                    <td>For example, if the control group is 3 times larger than the variant group, then kappa = 3</td>
-                  </table>
-                  </tr>
-                  <tr>
-                    <table>
-                      <td><h2>Sample Size Determination</h2></td>
-                      <td>Given, the CVR for the control,      , the ratio of sample sizes in each group, kappa       , and lift, the sample sizes for each group,                     , can be determined by the following formulas:</td>
-                    </table>
-                  </tr>
-                  <tr>
-                    <table>
-                      <td><h3>Sample Size Variant</h3></td>
-                      <td>Formula Here</td>
-                    </table>
-                  </tr>
-                  <tr>
-                    <table>
-                      <td><h3>Sample Size Control</h3></td>
-                      <td>Formula Here</td>
-                      </table>
-                  </tr>
-                  <tr><td>Note: Typically, the power,              ,  is .8 and significance level,      , is 0.05 ( or CI=95%).So, (Eq. 1) can be simplified to: </td></tr>
-                  <tr><td>Formula Here</td></tr>
-              </table>
-            </div>
+          <Accordion sx={{ marginTop: "2ch" }}>
+                <AccordionSummary
+                    expandIcon={"▼"}
+                    aria-controls="panel3a-content"
+                    id="panel3a-header"
+                >
+                    <Typography>Testing Formulas</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ display: "flex", padding: "0ch", borderTop: "1px solid rgba(0, 0, 0, .25) " }}>
+                    <Box className="col" width="3 0%" sx={{ margin: '1ch 5ch 1ch 2ch', paddingRight: '0ch' }}>
+                        <Typography align="center" fontWeight="bold">Kappa</Typography>
+                        <table align="center">
+                          <td><tr></tr><tr>κ = </tr></td>
+                          <td>
+                            <tr>𝑛<sub>𝑐</sub></tr>
+                            <tr><hr></hr></tr>
+                           <tr>𝑛<sub>𝑣</sub></tr>
+                          </td>
+                          <td><tr></tr><tr> or κ𝑛<sub>𝑣</sub> = 𝑛<sub>𝑐</sub></tr></td>
+                        </table>
+                        <Typography align="center">(For example, if the control group is 3 times larger than the variant group, then kappa = 3)</Typography>
+                    </Box>
+                    <Box className='col' width='35%' sx={{ margin: '1ch 5ch 1ch 2ch', padding: '0ch' }}>
+                      <Typography align='center' fontWeight='bold'>Sample Size Determination</Typography>
+                      <Typography align="center">Given, the CVR for the control, 𝑝<sub>𝑐</sub>, the ratio of sample sizes in each group, kappa (κ), and lift, 
+                        the sample sizes for each group, 𝑛<sub>𝑣</sub> and 𝑛<sub>𝑐</sub>, can be determined by the following formulas:</Typography>
+                      <p></p>
+                      <Typography align="center" fontStyle="italic" fontWeight="bold">Sample Size Control</Typography>
+                      <p align="center">𝑛<sub>𝑐</sub> = κ𝑛<sub>𝑣</sub></p>
+                    </Box>
+                    <Box className='col' width='35%' sx={{ margin: '1ch 5ch 1ch 2ch', padding: '0ch' }}>
+                      <p></p>
+                      <Typography align="center" fontStyle="italic" fontWeight="bold">Sample Size Variant</Typography>
+                      <img src={eq1} width="400wv" align="center"/>
+                      <p></p>
+                      <Typography align="center">Note: Typically, the power, (1 - 𝛽),  is .8 and significance level, ⍺, is 0.05 (or CI=95%). So, (Eq. 1) can be simplified to: </Typography>
+                      <img src={eq1Alt} width="400wv" align="center"/>
+                    </Box>
+                </AccordionDetails>
+            </Accordion>
         </div>
       )
     }
