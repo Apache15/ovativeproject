@@ -174,7 +174,7 @@ export default function ContinuousDefinitions() {
                         </TableRow>
                         <TableRow>
                             <TableCell>Cl</TableCell>
-                            <TableCell>Cofidence interval</TableCell>
+                            <TableCell>Confidence interval</TableCell>
                         </TableRow>
                     </TableContainer>
                 </Accordion>
