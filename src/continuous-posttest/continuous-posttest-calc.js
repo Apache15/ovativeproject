@@ -27,7 +27,7 @@ export default function ContPostTest() {
     //average revenue difference calculation
     const avgRevDif = (+inputs.avgRevVar - +inputs.avgRevCtrl).toFixed(2);
 
-    
+
 
     //check for whole numbers
     function inputValid(event, regex) {
@@ -39,11 +39,11 @@ export default function ContPostTest() {
     const conditionSatisfied = (
         inputs.sampleSizeVar >= 30 &&
         inputs.sampleSizeCtrl >= 30 &&
-        ((Math.max(inputs.stdDevVar, inputs.stdDevCtrl)/Math.min(inputs.avgRevVar, inputs.sampleSizeCtrl)) < 3)
+        ((Math.max(inputs.stdDevVar, inputs.stdDevCtrl) / Math.min(inputs.avgRevVar, inputs.sampleSizeCtrl)) < 3)
     )
 
-        //observed lift calculation
-        const lift = ((+avgRevDif / +inputs.avgRevCtrl) * 100).toFixed(2)
+    //observed lift calculation
+    const lift = ((+avgRevDif / +inputs.avgRevCtrl) * 100).toFixed(2)
 
     //Pooled Standard Deviation
     const SP = (Math.sqrt(((+inputs.sampleSizeVar - 1) * Math.pow(+inputs.stdDevVar, 2) + ((+inputs.sampleSizeCtrl - 1) * Math.pow(+inputs.stdDevCtrl, 2))) / (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2)));
@@ -57,7 +57,7 @@ export default function ContPostTest() {
     }
 
     //Calculates the number of additional days needed for testing
-    const daysNeeded = (Math.ceil(((1 + Math.pow((+inputs.sampleSizeCtrl/+inputs.sampleSizeVar),-1))*(Math.pow((SP * ( (norminv((1 - ((1-(0.01* +inputs.confidenceLvl))/2)), 0, 1) + norminv(0.8, 0, 1))  / +avgRevDif  )),2 ))) / (+inputs.sampleSizeVar / +inputs.testDuration)) - +inputs.testDuration);
+    const daysNeeded = (Math.ceil(((1 + Math.pow((+inputs.sampleSizeCtrl / +inputs.sampleSizeVar), -1)) * (Math.pow((SP * ((norminv((1 - ((1 - (0.01 * +inputs.confidenceLvl)) / 2)), 0, 1) + norminv(0.8, 0, 1)) / +avgRevDif)), 2))) / (+inputs.sampleSizeVar / +inputs.testDuration)) - +inputs.testDuration);
 
     //confidence interval calculations
     const confidenceIntevalUpper = +avgRevDif + marginOfError();
@@ -199,13 +199,24 @@ export default function ContPostTest() {
                             <Typography>Confidence Level</Typography>
                             <Tooltip title={"Used in the confidence interval to choose how confident we are that our data is within a specific range"} placement="left">
                                 <Slider
+                                    marks={
+                                        [
+                                            {
+                                                value: 80,
+                                                label: 80
+                                            },
+                                            {
+                                                value: 99,
+                                                label: 99
+                                            },
+                                        ]
+                                    }
                                     name="confidenceLvl"
                                     aria-label="Confidence Level"
                                     defaultValue={95}
                                     valueLabelDisplay="auto"
                                     label='Confidence Level'
                                     step={1}
-                                    marks
                                     min={80}
                                     max={99}
                                     onChange={handleInputChange}
@@ -252,6 +263,7 @@ export default function ContPostTest() {
                                     className='Test-Stat-Out'
                                     id="outlined"
                                     label="Test statistic"
+                                    inputProps={{ readOnly: true }}
                                     InputLabelProps={{ shrink: true }}
                                     value={testStat}
                                 >
@@ -311,14 +323,14 @@ export default function ContPostTest() {
                         </FormControl>
                     </Box>
                     <Box className='Input-form-box'>
-                        <div hidden={reject} style={{ color: "black", backgroundColor: "#b05d5d", fontWeight: 'bold' }}>Test inconclusive </div>
-                        <div hidden={!reject} style={{ color: "black", backgroundColor: "#6eb05d", fontWeight: 'bold'}}>Is statistically significant</div>
+                        <div hidden={reject} style={{ color: "#b05d5d", fontWeight: 'bold' }}>Test inconclusive </div>
+                        <div hidden={!reject} style={{ color: "#6eb05d", fontWeight: 'bold' }}>Is statistically significant</div>
                         <TableContainer>
-                        <Table>
-                            <TableRow><TableCell style={{ textAlign: "center" }} colSpan={2}><b><i>Checking Assumptions</i></b></TableCell></TableRow>
-                            <TableRow><TableCell>Assumptions satisfied?</TableCell><TableCell>{String(conditionSatisfied).toUpperCase()}</TableCell></TableRow>
-                        </Table>
-                    </TableContainer>
+                            <Table>
+                                <TableRow><TableCell style={{ textAlign: "center" }} colSpan={2}><b><i>Checking Assumptions</i></b></TableCell></TableRow>
+                                <TableRow><TableCell>Assumptions satisfied?</TableCell><TableCell>{String(conditionSatisfied).toUpperCase()}</TableCell></TableRow>
+                            </Table>
+                        </TableContainer>
                         <Accordion>
                             <AccordionSummary
                                 expandIcon={"▼"}
@@ -329,8 +341,8 @@ export default function ContPostTest() {
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography hidden={!reject}>{avgRevDif > 0 ? "The variant group performed significantly better than the control group" : "The Control performed significantly better than the Variant"}</Typography>
-                                <Typography hidden={!reject}>{avgRevDif > 0 ? "We are " + +inputs.confidenceLvl + "% confident that the Variant will perform $" + (confidenceIntevalLower).toPrecision(4) +  " to $" + (confidenceIntevalUpper).toPrecision(4) + " better than the Control":
-                                "We are " + +inputs.confidenceLvl + "% confident that the Control will perform $" + (confidenceIntevalLower).toPrecision(4) + " to $" + (confidenceIntevalUpper).toPrecision(4) + " better than the Variant"}
+                                <Typography hidden={!reject}>{avgRevDif > 0 ? "We are " + +inputs.confidenceLvl + "% confident that the Variant will perform $" + (confidenceIntevalLower).toPrecision(4) + " to $" + (confidenceIntevalUpper).toPrecision(4) + " better than the Control" :
+                                    "We are " + +inputs.confidenceLvl + "% confident that the Control will perform $" + (confidenceIntevalLower).toPrecision(4) + " to $" + (confidenceIntevalUpper).toPrecision(4) + " better than the Variant"}
                                 </Typography>
                                 <Typography hidden={reject}>The test was inconclusive there is no evidence one group outperformed the other</Typography>
                             </AccordionDetails>
@@ -344,14 +356,14 @@ export default function ContPostTest() {
                                 <Typography>More Results</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                            <Typography hidden={!reject}>No additional days needed</Typography>
-                            <Typography hidden={reject}> Additional Days Needed: {daysNeeded}</Typography>
+                                <Typography hidden={!reject}>No additional days needed</Typography>
+                                <Typography hidden={reject}> Additional Days Needed: {daysNeeded}</Typography>
                             </AccordionDetails>
                         </Accordion>
                     </Box>
                 </div>
-                <ContinousFormulas params={inputs} pooledstd={SP} satisfied={conditionSatisfied}/>
-                <ContinuousDefinitions/>
+                <ContinousFormulas params={inputs} pooledstd={SP} satisfied={conditionSatisfied} />
+                <ContinuousDefinitions />
             </Container>
         </div>
     )

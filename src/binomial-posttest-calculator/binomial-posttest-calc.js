@@ -172,8 +172,19 @@ export default function BinomialPostTestCalculator() {
                             aria-label="Confidence Level"
                             defaultValue={95}
                             valueLabelDisplay="auto"
+                            marks={
+                                [
+                                    {
+                                        value: 80,
+                                        label: 80
+                                    },
+                                    {
+                                        value: 99,
+                                        label: 99
+                                    },
+                                ]
+                            }
                             step={1}
-                            marks
                             min={80}
                             max={99}
                             onChange={inputChange}
@@ -255,8 +266,8 @@ export default function BinomialPostTestCalculator() {
                     </TextField>
                 </Box>
                 <Box className="Input-form-box">
-                    <div hidden={rejectHypothesis} style={{ color: "black", backgroundColor: "#b05d5d" }}>No significant difference</div>
-                    <div hidden={!rejectHypothesis} style={{ color: "black", backgroundColor: "#6eb05d" }}>Test is statistically significant</div>
+                    <div hidden={rejectHypothesis} style={{ color: "#b05d5d", fontWeight: "bold" }}>No significant difference</div>
+                    <div hidden={!rejectHypothesis} style={{ color: "#6eb05d", fontWeight: "bold" }}>Test is statistically significant</div>
                     <TableContainer>
                         <Table>
                             <TableRow><TableCell style={{ textAlign: "center" }} colSpan={2}><b><i>Checking Assumptions</i></b></TableCell></TableRow>
@@ -461,7 +472,7 @@ export default function BinomialPostTestCalculator() {
                             </TableRow>
                         </Table>
                     </TableContainer>
-                    <div style={{ fontWeight: "bold", border: "2px solid black", marginBottom: "10px", padding: "10px" }}>Are all conditions satisfied? <span style={{ fontWeight: "normal", backgroundColor: conditionSatisfied ? "#6eb05d" : "#b05d5d" }}>{conditionSatisfied ? "True" : "False"}</span></div>
+                    <div style={{ fontWeight: "bold", border: "2px solid black", marginBottom: "10px", padding: "10px" }}>Are all conditions satisfied? <span style={{ fontWeight: "normal", color: conditionSatisfied ? "#6eb05d" : "#b05d5d" }}>{conditionSatisfied ? "True" : "False"}</span></div>
                 </Accordion>
             </Box>
             <Box className="Line-box">

@@ -171,72 +171,72 @@ export default class BiPretest extends React.Component{
     render(){
       return(
         <div className='body-container'>
-        <div class="Button">
-          <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="changeDetail" variant="contained" onClick={this.changeDetail.bind(this)}>Toggle Tooltips</Button>
+        <div className="Button">
+          {/*<Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="changeDetail" variant="contained" onClick={this.changeDetail.bind(this)}>Toggle Tooltips</Button>*/}
         </div>
-          <div class="BodyContainers">
-            <Box class="InputBox">
-              <div class="BoxLabel">Inputs</div>
-                <Tooltip title={this.state.hidden === false ? <h2>The desired percent increase in metric for users receiving the variant versus the control group</h2> : ""} placement="right" arrow>
+          <div className="BodyContainers">
+            <Box className="InputBox">
+              <div className="BoxLabel">Inputs</div>
+                <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">The desired percent increase in metric for users receiving the variant versus the control group</div> : ""} placement="right" arrow>
                   <TextField label="Desired Lift" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="desiredLiftIn" type="number" InputProps={{ inputProps: { max: 100, min: 10 }, endAdornment: <InputAdornment position="end">%</InputAdornment>}} onChange={this.processField1Change.bind(this)} 
                   onFocus={this.updateField1DisplayA.bind(this)} onBlur={this.updateField1DisplayB.bind(this)} onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.displayedDesiredLift}/>
                 </Tooltip>
-                <Tooltip title={this.state.hidden === false ? <h2>The current conversion rate of successful actions taken divided by the number of visitors to the page</h2> : ""} placement="right" arrow> 
+                <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">The current conversion rate of successful actions taken divided by the number of visitors to the page</div> : ""} placement="right" arrow> 
                   <TextField label="Baseline Conversion Rate, Control Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="convRateControl" type="number" onChange={this.processField2Change.bind(this)} 
                   onFocus={this.updateField2DisplayA.bind(this)} onBlur={this.updateField2DisplayB.bind(this)} onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.displayedConvRateControl}/>
                 </Tooltip>
-                <Tooltip title={this.state.hidden === false ? <h2>The percentage of the total sample size that will use the control rather than the variant</h2> : ""} placement="right" arrow>
+                <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">The percentage of the total sample size that will use the control rather than the variant</div> : ""} placement="right" arrow>
                   <TextField label="Percentage of traffic in Control Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="trafficControl" InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} type="number" 
                   onChange={this.processField3Change.bind(this)} onFocus={this.updateFields3And4DisplayA.bind(this)}
                   onBlur={this.updateFields3And4DisplayB.bind(this)} onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.displayedTrafficControl}/> 
                 </Tooltip>
-                <Tooltip title={this.state.hidden === false ? <h2>The percentage of the total sample size that will use the variant rather than the control</h2> : ""} placement="right" arrow>
+                <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">The percentage of the total sample size that will use the variant rather than the control</div> : ""} placement="right" arrow>
                   <TextField label="Percentage of traffic in Variant Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="trafficVariant" InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} type="number" 
                   onChange={this.processField4Change.bind(this)} onFocus={this.updateFields3And4DisplayA.bind(this)}
                   onBlur={this.updateFields3And4DisplayB.bind(this)} onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.displayedTrafficVariant}/> 
                 </Tooltip>
                 <Typography>Confidence Level</Typography>
-                <Tooltip title={this.state.hidden === false ? <h2>Suggested value range is 80% - 95%</h2> : ""} placement="right" arrow>
-                  <Slider name="confiLevel" aria-label="Confidence Level" value={this.state.confLevel} valueLabelDisplay="auto" label='Confidence Level'
-                    step={1} marks min={80} max={99} onChange={this.processField5Change.bind(this)}/>
+                <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">Suggested value range is 80% - 95%</div> : ""} placement="right" arrow>
+                  <Slider marks={[{value: 80,label: 80},{value: 99,label: 99},]} name="confiLevel" aria-label="Confidence Level" value={this.state.confLevel} valueLabelDisplay="auto" label='Confidence Level'
+                    step={1} min={80} max={99} onChange={this.processField5Change.bind(this)}/>
                 </Tooltip>
                   <Typography>Statistical Power</Typography>
-                  <Tooltip title={this.state.hidden === false ? <h2>Statistical Power is typically 80%</h2> : ""} placement="right" arrow>
+                  <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">Statistical Power is typically 80%</div> : ""} placement="right" arrow>
                     <Slider name="statsPower" aria-label="Statistical Power" value={this.state.statPower} valueLabelDisplay="auto" label='Confidence Level'
-                      step={1} marks min={80} max={99} onChange={this.processField6Change.bind(this)}/>
+                      step={1} marks={[{value: 80,label: 80},{value: 99,label: 99},]} min={80} max={99} onChange={this.processField6Change.bind(this)}/>
                   </Tooltip>
-                  <Tooltip title={this.state.hidden === false ? <h2>The positive number of daily visitors participating in either the control or the variant group</h2> : ""} placement="right" arrow>
+                  <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">The positive number of daily visitors participating in either the control or the variant group</div> : ""} placement="right" arrow>
                 <TextField label="Total Number of Daily Visitors (both groups)" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} id="dailyVisit" type="number" onChange={this.processField7Change} onBlur={this.updateField7Value.bind(this)}
                   onKeyPress={(e) => {this.inputValid(e, /[0-9, .]/)}} value={this.state.dailyVisitors}/>                
                   </Tooltip>
             </Box>
-            <Box class="OutputBox">
-              <div class="BoxLabel">Outputs</div>
-              <Tooltip title={this.state.hidden === false ? <h2>The conversion rate for the variant group required to meet the desired lift of the baseline conversion rate</h2> : ""} placement="left" arrow>
+            <Box className="OutputBox">
+              <div className="BoxLabel">Outputs</div>
+              <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">The conversion rate for the variant group required to meet the desired lift of the baseline conversion rate</div> : ""} placement="left" arrow>
                 <TextField label="Conversion Rate, Variant Group" variant="filled" sx={{ m: 1}} InputProps={{color: "black",endAdornment: <InputAdornment position="end">%</InputAdornment>,readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
                   InputLabelProps={{ shrink: true }} id="convRateVariant" type="number" value={this.state.displayedConvRateVariant}/>
               </Tooltip>
-              <Tooltip title={this.state.hidden === false ? <h2>The % of traffic in the control group divided by the % of traffic in the variant group</h2> : ""} placement="left" arrow>
+              <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">The % of traffic in the control group divided by the % of traffic in the variant group</div> : ""} placement="left" arrow>
                 <TextField label="Ratio of the two group traffic sizes" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
                   InputLabelProps={{ shrink: true }} id="trafficSizeRatio" type="number" value={this.state.displayedTrafficRatio}/>
               </Tooltip>
-              <Tooltip title={this.state.hidden === false ? <h2>The sample size required for the variant group, rounded up</h2> : ""} placement="left" arrow>
+              <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">The sample size required for the variant group, rounded up</div> : ""} placement="left" arrow>
                 <TextField label="Sample Size, Variant" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
                   InputLabelProps={{ shrink: true }} id="sampleVariant" type="number" value={this.state.sampleVariant}/>
               </Tooltip>
-              <Tooltip title={this.state.hidden === false ? <h2>The sample size required for the control group, rounded up</h2> : ""} placement="left" arrow>
+              <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">The sample size required for the control group, rounded up</div> : ""} placement="left" arrow>
                 <TextField label="Sample Size, Control" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
                   InputLabelProps={{ shrink: true }} id="sampleControl" type="number" value={this.state.sampleControl}/>
               </Tooltip>
-              <Tooltip title={this.state.hidden === false ? <h2>The variant sample size plus the control sample size</h2> : ""} placement="left" arrow>
+              <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">The variant sample size plus the control sample size</div> : ""} placement="left" arrow>
                 <TextField label="Total Sample Size" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
                   InputLabelProps={{ shrink: true }} id="sampleTotal" type="number" value={this.state.sampleTotal}/>
                 </Tooltip>
-              <Tooltip title={this.state.hidden === false ? <h2>The number of days the test will take to run, rounded up</h2> : ""} placement="left" arrow>
+              <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">The number of days the test will take to run, rounded up</div> : ""} placement="left" arrow>
                 <TextField label="Days to run the test" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
                   InputLabelProps={{ shrink: true }} id="days" type="number" value={this.state.days}/>
               </Tooltip>
-              <Tooltip title={this.state.hidden === false ? <h2>The number of weeks the test will take to run, rounded up</h2> : ""} placement="left" arrow>
+              <Tooltip title={this.state.hidden === false ? <div className="tooltip-text">The number of weeks the test will take to run, rounded up</div> : ""} placement="left" arrow>
                 <TextField label="Weeks to run the test" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
                   InputLabelProps={{ shrink: true }} id="weeks" type="number" value={this.state.weeks}/>
               </Tooltip>
