@@ -1,6 +1,6 @@
 import {TextField, InputAdornment, FormControl, Box, Tooltip, Button, Slider, Typography, Container} from "@mui/material";
 import "./continuousPreTest.css"
-import jstat from 'jstat';
+import jStat from 'jstat';
 import React, {useState} from "react";
 import ContinousPreTestFormulas from "../continuous-calculator/continuousPreTestFormulas";
 import ContinuousDefinitions from "../continuous-definitions/continuousDefinitions";
@@ -22,12 +22,18 @@ export default function ContinuousPreTestCalculator() {
     const groupSizeRatio = (formData.ctrlTrafficPercentInput * 0.01) / (formData.varTrafficPercentInput * 0.01);
     const varGroupRevenue = formData.conBaseRevInput * (1 + (formData.desiredLiftInput * .01));
     const revAbsoluteDiff = Math.abs(formData.conBaseRevInput - varGroupRevenue);
-    const varSampleSize = (1 + (1 / groupSizeRatio)) * (Math.pow( formData.pooledStandardDeviationInput * ( (jstat.normal.inv(((1 - ((1 - (formData.confidenceLvlInput * 0.01))) / 2), 0, 1)) + 
-        jstat.normal.inv((formData.statisticalPowerInput * 0.01), 0, 1)) / (formData.conBaseRevInput - varGroupRevenue))),2);
+    const varSampleSize = (1 + (1 / groupSizeRatio)) * (Math.pow( formData.pooledStandardDeviationInput * ( (jStat.normal.inv(((1 - ((1 - (formData.confidenceLvlInput * 0.01))) / 2), 0, 1)) + 
+        jStat.normal.inv((formData.statisticalPowerInput * 0.01), 0, 1)) / (formData.conBaseRevInput - varGroupRevenue))),2);
     const conSampleSize = (varSampleSize * groupSizeRatio);
     const totalSampleSize = (varSampleSize + conSampleSize);
     const testRunDays = Math.ceil(totalSampleSize / formData.dailyVisitorsInput);
     const testRunWeeks = Math.ceil(testRunDays / 7);
+
+    function inputValid(event, regex) {
+        if (!regex.test(event.key)) {
+            event.preventDefault();
+        }
+    }
 
     const inputChange = (input) => {
         if (!isNaN(input.target.value)) {
@@ -42,7 +48,7 @@ export default function ContinuousPreTestCalculator() {
     return (
         <>
             <Container maxWidth="xl" sx={{ paddingBottom: "4ch" }}>
-                <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button>
+                { /* <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button> */}
                 <div className="container">
                     <Box className="Input-form-box">
                         <div className="Form-title">Insert Numbers Here</div>
@@ -57,6 +63,7 @@ export default function ContinuousPreTestCalculator() {
                                     type="number"
                                     name="desiredLiftInput"
                                     label="Desired Lift"
+                                    onKeyPress={(e) => (this.inputValid(e, /[0-9, .]/))}
                                     InputProps={{
                                         endAdornment: <InputAdornment position="end">%</InputAdornment>
                                     }}
@@ -71,10 +78,11 @@ export default function ContinuousPreTestCalculator() {
                                     className="ctrlBaselineRev"
                                     variant="standard"
                                     required={true}
-                                    placeholder="20"
+                                    placeholder="10.06"
                                     type="number"
                                     name="conBaseRevInput"
                                     label="Baseline Revenue, Control Group"
+                                    onKeyPress={(e) => (this.inputValid(e, /[0-9, .]/))}
                                     InputProps={{
                                         startAdornment: <InputAdornment position="start">$</InputAdornment>
                                     }}
@@ -89,10 +97,11 @@ export default function ContinuousPreTestCalculator() {
                                     className="ctrlTrafficPercent"
                                     variant="standard"
                                     required={true}
-                                    placeholder="35"
+                                    placeholder="50"
                                     type="number"
                                     name="ctrlTrafficPercentInput"
                                     label="Percentage of traffic in Control Group"
+                                    onKeyPress={(e) => (this.inputValid(e, /[0-9, .]/))}
                                     InputProps={{
                                         endAdornment: <InputAdornment position="end">%</InputAdornment>
                                     }}
@@ -107,10 +116,11 @@ export default function ContinuousPreTestCalculator() {
                                     className="varTrafficPercent"
                                     variant="standard"
                                     required={true}
-                                    placeholder="35"
+                                    placeholder="50"
                                     type="number"
                                     name="varTrafficPercentInput"
                                     label="Percentage of traffic in Variant Group"
+                                    onKeyPress={(e) => (this.inputValid(e, /[0-9, .]/))}
                                     InputProps={{
                                         endAdornment: <InputAdornment position="end">%</InputAdornment>
                                     }}
@@ -161,6 +171,7 @@ export default function ContinuousPreTestCalculator() {
                                     type="number"
                                     name="dailyVisitorsInput"
                                     label="Total Number of Daily Visitors (both groups)"
+                                    onKeyPress={(e) => (this.inputValid(e, /[0-9, .]/))}
                                     onChange={inputChange}
                                     InputLabelProps={{shrink: true}}
                                 >
@@ -176,6 +187,7 @@ export default function ContinuousPreTestCalculator() {
                                     name="pooledStandardDeviationInput"
                                     type="number"
                                     label="Estimate of Pooled Standard Deviation"
+                                    onKeyPress={(e) => (this.inputValid(e, /[0-9, .]/))}
                                     onChange={inputChange}
                                     InputLabelProps={{shrink: true}}
                                 >
