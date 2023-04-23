@@ -5,7 +5,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ContinousFormulas from './continous-posttest-formulas';
-import ContinuousDefinitions from '../continuous-definitions/continuousDefinitions';
+import Definitions from '../definitions/definitions';
 
 
 export default function ContPostTest() {
@@ -378,7 +378,7 @@ export default function ContPostTest() {
                     </Box>
                 </div>
                 <ContinousFormulas />
-                <ContinuousDefinitions/>
+                <Definitions/>
             </Container>
         </>
     )
