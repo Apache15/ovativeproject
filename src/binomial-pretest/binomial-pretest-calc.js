@@ -105,7 +105,7 @@ export default function BiPretest(){
     //Handles changes made to the "Percentage Traffic Control Group" Text Field
     function processField3Change(inputElement){
       var newCont = inputElement.target.value;
-      var newVar = 100*(1 - (.01*newCont));
+      var newVar = 100-newCont;
       setData((previous) => {
         return { ...previous, "trafficControl": newCont, "trafficVariant": newVar, "trafficRatio": Math.round(newCont*100/newVar)/100 }
       })
@@ -117,7 +117,7 @@ export default function BiPretest(){
     //Handles changes made to the "Percentage Traffic Variant Group" Text Field
     function processField4Change(inputElement){
       var newVar = inputElement.target.value;
-      var newCont = 100*(1 - (.01*newVar));
+      var newCont = 100-newVar;
       setData((previous) => {
         return { ...previous, "trafficControl": newCont, "trafficVariant": newVar, "trafficRatio": Math.round(newCont*100/newVar)/100 }
       })
@@ -145,11 +145,12 @@ export default function BiPretest(){
         tempVar = 0;
       }
       setData((previous) => {
-        return { ...previous, "trafficControl": tempCont, "trafficVariant": tempVar }
+        return { ...previous, "trafficControl": tempCont, "trafficVariant": tempVar, "trafficRatio": Math.round(tempCont*100/tempVar)/100 }
       })
       setActualData((previous) => {
-        return { ...previous, "trafficControl": tempCont, "trafficVariant": tempVar }
+        return { ...previous, "trafficControl": tempCont, "trafficVariant": tempVar, "trafficRatio": tempCont/tempVar }
       })
+      calculateSampleSizes(tempCont/tempVar, 0, 3);
     }
     //Handles changes made to the "Confidence Level" TextField
     function processField5Change(inputElement){
