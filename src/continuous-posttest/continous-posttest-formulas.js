@@ -29,34 +29,29 @@ export default function ContinousFormulas(props) {
                         <div className="header">Formulas</div>
                     </AccordionSummary>
                     <AccordionDetails sx={{ display: 'flex', padding: "0ch", borderTop: "1px solid rgba(0, 0, 0, .25) " }}>
-                        <Box sx={{ display: 'inline', margin: '0ch 0ch 0ch 7ch', padding: '1ch'}}>
+                        <Box sx={{ display: 'inline-block', margin: '0ch 0ch 0ch 1ch', padding: '0ch' }}>
 
-                            <Box className='Line-box' >
-                                <div>Test Statistic</div>
-                                <img src={TSimg} width="300vw" height='auto' alt='Test statistic formula' />
-                            </Box>
+                            <div>Test Statistic</div>
+                            <img src={TSimg} width="60%" height='auto' alt='Test statistic formula' />
 
-                            <Box className='Line-box'>
-                                <div>Standard Error</div>
-                                <img src={SPimg} width="500vw" height='auto' alt='Standard error formula' />
-                            </Box>
-                            </Box>
-                            <Box sx={{ margin: '0ch 0ch 0ch 4ch', padding: '1ch' }}>
-                            <Box className='Line-box' >
-                                <div>Degrees of Freedom</div>
-                                <img src={DOFimg} width="400vw" height='auto' alt='Degrees of freedom formula' />
-                            </Box >
-                            <Box className='Line-box'>
-                                <div>Confidence Interval</div>
-                                <Tooltip title={
-                                    <React.Fragment>{"Where, "}<i>t</i><sub>1-α/2</sub> {"is a constant."}</React.Fragment>}
-                                    >
-                                    <img src={CLimg} width="500vw" height='auto' alt='Confidence interval formula' />
-                                </Tooltip>
-                                
-                                
-                            </Box>
+                            <div>Standard Error</div>
+                            <img src={SPimg} width="100%" height='auto' alt='Standard error formula' />
+
                         </Box>
+                        <Box sx={{ margin: '0ch 0ch 0ch 0ch', padding: '1ch' }}>
+
+                            <div>Degrees of Freedom</div>
+                            <img src={DOFimg} width="100%" height='auto' alt='Degrees of freedom formula' />
+
+                            <div>Confidence Interval</div>
+                            <Tooltip title={
+                                <React.Fragment>{"Where, "}<i>t</i><sub>1-α/2</sub> {"is a constant."}</React.Fragment>}
+                            >
+                                <img src={CLimg} width="100%" height='auto' alt='Confidence interval formula' />
+                            </Tooltip>
+
+                        </Box>
+
 
                     </AccordionDetails>
                 </Accordion>
