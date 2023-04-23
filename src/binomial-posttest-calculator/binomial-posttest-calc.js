@@ -22,7 +22,7 @@ export default function BinomialPostTestCalculator() {
         conControlInput: 0,
         trafficControlInput: 0,
         testDuration: 0,
-        confidenceLevel: 90,
+        confidenceLevel: 95,
     })
     //function to calculate normal dist.
     function ncdf(x, mean, std) {
