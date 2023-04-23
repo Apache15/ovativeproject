@@ -137,6 +137,7 @@ export default function ContinuousPreTestCalculator() {
                                     defaultValue={95}
                                     valueLabelDisplay="auto"
                                     label='Confidence Level'
+                                    name="confidenceLvlInput"
                                     step={1}
                                     marks
                                     min={80}
@@ -153,6 +154,7 @@ export default function ContinuousPreTestCalculator() {
                                     defaultValue={80}
                                     valueLabelDisplay="auto"
                                     label='Statistical Power'
+                                    name="statisticalPowerInput"
                                     step={1}
                                     marks
                                     min={80}
