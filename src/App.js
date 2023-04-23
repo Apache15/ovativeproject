@@ -12,9 +12,16 @@ const theme = createTheme({
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          fontSize: '1em'
+          fontSize: '1.25em'
         }
       }
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          
+        },
+      },
     },
     MuiTable: {
       styleOverrides: {
@@ -52,8 +59,8 @@ const theme = createTheme({
 
 function App() {
   const pages = ['Continuous Pre Test', 'Continuous Post Test', 'Binomial Pre Test', 'Binomial Post Test'];
-  const [activePage, changePage] = useState(0);
-  const [pageData, changeData] = useState(0);
+  const [activePage, changePage] = useState("Continuous Pre Test");
+  const [pageData, changeData] = useState(<ContinuousPreTestCalculator />);
   useEffect(() => {
     switch (activePage) {
       case "Continuous Pre Test":
@@ -77,14 +84,22 @@ function App() {
     <div className="App">
       <ThemeProvider theme={theme}>
         <AppBar position='fixed'>
-          <Toolbar sx={{ backgroundColor: 'White' }}>
+          <Toolbar sx={{ backgroundColor: 'white' }}>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (
                 <Button
+                  className="nav-button"
                   onClick={() => { changePage(page); }}
                   key={page}
+                  
                   sx={{
-                    my: 2, color: '#FA4616',
+                    ":hover":{
+                      backgroundColor:'#FA4616',
+                      color:'white',
+                    },
+                    marginRight:'10px',
+                    backgroundColor: activePage===page? '#FA4616':'white',
+                    my: 2, color: activePage===page? 'white' : '#FA4616',
                     display: 'block',
                     fontFamily: "sans-serif",
                     fontWeight: 700,

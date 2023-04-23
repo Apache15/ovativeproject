@@ -164,7 +164,7 @@ export default function ContinousFormulas(props) {
                                 </TableRow>
                             </Table>
                         </TableContainer>
-                        <div style={{ fontWeight: "bold", border: "2px solid black", marginBottom: "10px", padding: "10px" }}>Are all conditions satisfied? <span style={{ fontWeight: "normal", backgroundColor: props.satisfied ? "#6eb05d" : "#b05d5d" }}>{props.satisfied ? "True" : "False"}</span></div>
+                        <div style={{ fontWeight: "bold", border: "2px solid black", marginBottom: "10px", padding: "10px" }}>Are all conditions satisfied? <span style={{ fontWeight: "normal", color: props.satisfied ? "#6eb05d" : "#b05d5d" }}>{props.satisfied ? "True" : "False"}</span></div>
                     </AccordionDetails>
                 </Accordion>
             </Box>
