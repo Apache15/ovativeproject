@@ -16,17 +16,6 @@ export default function ContinousFormulas(props) {
     const alpha = "\u0251";
     const greaterEqualTo = "\u2265";
 
-    // const [params, setParams] = useState({ //input states
-    //     avgRevVar: 0,
-    //     avgRevCtrl: 0,
-    //     stdDevVar: 0,
-    //     stdDevCtrl: 0,
-    //     sampleSizeVar: 0,
-    //     sampleSizeCtrl: 0,
-    //     confidenceLvl: 80,
-    //     testDuration: 0
-    // })
-
     return (
         <>
             <div className="header" style={{ marginTop: '2ch' }}>Continuous Post-test Education</div>

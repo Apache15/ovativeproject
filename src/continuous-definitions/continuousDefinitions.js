@@ -32,11 +32,13 @@ export default function ContinuousDefinitions() {
                             <TableCell>Variant</TableCell>
                             <TableCell>Contains at least one element change from the control</TableCell>
                             <TableCell>Group 1</TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Population</TableCell>
                             <TableCell>All the visitors that come to the website/app</TableCell>
                             <TableCell>Group 2</TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Sample</TableCell>
@@ -61,16 +63,19 @@ export default function ContinuousDefinitions() {
                                 <div>X = count of successes</div>
                                 <div>N = size of population</div>
                             </TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Null Hypothesis</TableCell>
                             <TableCell>Assumes there is no difference between the variant and the control</TableCell>
                             <TableCell>H<sub>0</sub>: p<sub>1</sub> - p<sub>2</sub> = 0</TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Alternative Hypothesis </TableCell>
                             <TableCell>There is a difference between the variant and the control</TableCell>
                             <TableCell>H<sub>a</sub>: p<sub>1</sub> - p<sub>2</sub> ≠ 0</TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Type 1 Error</TableCell>
@@ -109,11 +114,13 @@ export default function ContinuousDefinitions() {
                             <TableCell>Parameter With a hat</TableCell>
                             <TableCell>Data that is calculated out of a sample</TableCell>
                             <TableCell>Ex, {"\u0070\u0302"}</TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Parameter without a hat</TableCell>
                             <TableCell>Data that is calculated out of a population</TableCell>
                             <TableCell>Ex, p</TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Standard Deviation</TableCell>
@@ -161,6 +168,7 @@ export default function ContinuousDefinitions() {
                             <TableCell>Kappa</TableCell>
                             <TableCell>Ratio of sample sizes in each group. For example, if the control group is three times larger than the variant group, kappa=3</TableCell>
                             <TableCell>k</TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Statistical Significance</TableCell>
@@ -171,10 +179,14 @@ export default function ContinuousDefinitions() {
                         <TableRow>
                             <TableCell>CRV</TableCell>
                             <TableCell>Conversion Rate</TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Cl</TableCell>
                             <TableCell>Confidence interval</TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                     </TableContainer>
                 </Accordion>
