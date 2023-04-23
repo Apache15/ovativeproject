@@ -9,13 +9,6 @@ import { Box, Typography, Grid } from '@mui/material'
 
 export default function ContinousPreTestFormulas() {
 
-    const xBarSub2 = "x\u0304\u2082";
-    const xBarSub1 = "x\u0304\u2081";
-    const sSub1 = "S\u2081";
-    const sSub2 = "S\u2082";
-    const sp = "\u0073\u209a";
-    const n1 = "n\u2081";
-    const n2 = "n\u2082";
 
     return (
         <>
@@ -28,16 +21,6 @@ export default function ContinousPreTestFormulas() {
                     <div className="header">Formulas and Notation</div>
                 </AccordionSummary>
                 <AccordionDetails sx={{ display: 'flex', padding: "0ch", borderTop: "1px solid rgba(0, 0, 0, .25) " }}>
-                    <Box className='col' width='30%' sx={{ margin: '1ch 5ch 1ch 2ch', paddingRight: '0ch' }}>
-                        <Typography align='center' fontWeight='bold'>Notation</Typography>
-                        <Typography fontSize='21px'>Average Revenue, Variant: {xBarSub1}</Typography>
-                        <Typography fontSize='20px'>Average Revenue, Control: {xBarSub2}</Typography>
-                        <Typography fontSize='20px'>Standard Deviation, Variant: {sSub1}</Typography>
-                        <Typography fontSize='20px'>Standard Deviation, Control: {sSub2}</Typography>
-                        <Typography fontSize='20px'>Pooled Standard Deviation: {sp}</Typography>
-                        <Typography fontSize='20px'>Sample Size, Variant: {n1}</Typography>
-                        <Typography fontSize='20px'>Sample Size, Control: {n2}</Typography>
-                    </Box>
                     <Box className='col' width='65%' sx={{ margin: '0ch 0ch 0ch 4ch', padding: '1ch' }}>
                         <Typography align='center' fontWeight='bold'>Formulas</Typography>
                         <Grid container spacing={1}>
