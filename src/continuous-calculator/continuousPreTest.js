@@ -8,24 +8,30 @@ import ContinuousDefinitions from "../continuous-definitions/continuousDefinitio
 export default function ContinuousPreTestCalculator() {
     const [isDetailed, setDetail] = useState(true);
     const [formData, setData] = useState({
-        ctrlTrafficPercentInput: 0,
-        varTrafficPercentInput: 0,
-        conBaseRevInput: 0,
-        desiredLiftInput: 0,
-        pooledStandardDeviationInput: 0,
-        confidenceLvlInput: 0,
-        statisticalPowerInput: 0,
-        dailyVisitorsInput: 0
-
+        ctrlTrafficPercentInput: 50,
+        varTrafficPercentInput: 50,
+        conBaseRevInput: 10.06,
+        desiredLiftInput: 1.5,
+        pooledStandardDeviationInput: 1,
+        confidenceLvlInput: 95,
+        statisticalPowerInput: 80,
+        dailyVisitorsInput: 20
+    })
+    const [actualData, setActualData] = useState({
+        ctrlTrafficPercentInput: 50,
+        varTrafficPercentInput: 50,
+        desiredLiftInput: 1.5,
+        pooledStandardDeviationInput: 1,
     })
 
-    const groupSizeRatio = (formData.ctrlTrafficPercentInput * 0.01) / (formData.varTrafficPercentInput * 0.01);
-    const varGroupRevenue = formData.conBaseRevInput * (1 + (formData.desiredLiftInput * .01));
+    const groupSizeRatio = (actualData.ctrlTrafficPercentInput * 0.01) / (actualData.varTrafficPercentInput * 0.01);
+    const varGroupRevenue = formData.conBaseRevInput * (1 + (actualData.desiredLiftInput * .01));
     const revAbsoluteDiff = Math.abs(formData.conBaseRevInput - varGroupRevenue);
-    const varSampleSize = (1 + (1 / groupSizeRatio)) * (Math.pow(formData.pooledStandardDeviationInput * ((jstat.normal.inv(((1 - ((1 - (formData.confidenceLvlInput * 0.01))) / 2), 0, 1)) +
-        jstat.normal.inv((formData.statisticalPowerInput * 0.01), 0, 1)) / (formData.conBaseRevInput - varGroupRevenue))), 2);
-    const conSampleSize = (varSampleSize * groupSizeRatio);
-    const totalSampleSize = (varSampleSize + conSampleSize);
+    const tempA = 1 + (1/groupSizeRatio);
+    const tempB = actualData.pooledStandardDeviationInput*((jStat.normal.inv((1-((1-(.0001*formData.confidenceLvlInput))/2)), 0, 1) + jStat.normal.inv((.0001*formData.statisticalPowerInput), 0, 1)) / (formData.conBaseRevInput-varGroupRevenue));
+    const varSampleSize = Math.ceil(tempA*tempB*tempB);
+    const conSampleSize = Math.ceil(varSampleSize * groupSizeRatio);
+    const totalSampleSize = varSampleSize + conSampleSize;
     const testRunDays = Math.ceil(totalSampleSize / formData.dailyVisitorsInput);
     const testRunWeeks = Math.ceil(testRunDays / 7);
 
@@ -37,6 +43,109 @@ export default function ContinuousPreTestCalculator() {
                 return { ...previous, [name]: value }
             })
         }
+    }
+
+    function handleLift(event){
+        inputChange(event);
+        setActualData((previous) => {
+            return {...previous, "desiredLiftInput": event.target.value}
+            })
+    }
+
+    function blurLift(event){
+        var temp = Math.round(100*event.target.value)/100;
+        setData((previous) => {
+            return { ...previous, "desiredLiftInput": temp}
+        })
+    }
+
+    function unblurLift(){
+        setData((previous) => {
+            return { ...previous, "desiredLiftInput": actualData.desiredLiftInput}
+        })
+    }
+
+    function blurRevenue(event){
+        var temp = Math.ceil(event.target.value*100)/100;
+        setData((previous) => {
+            return { ...previous, "conBaseRevInput": temp}
+        })
+    }
+
+    function handleTraffic1(event){
+        var temp = event.target.value;
+        var temp2 = 100-temp;
+        setData((previous) => {
+            return {...previous, "ctrlTrafficPercentInput": temp, "varTrafficPercentInput": temp2}
+        })
+        setActualData((previous) => {
+        return {...previous, "ctrlTrafficPercentInput": temp, "varTrafficPercentInput": temp2}
+        })
+    }
+    
+    function handleTraffic2(event){
+        var temp = event.target.value;
+        var temp2 = 100-temp;
+        setData((previous) => {
+            return {...previous, "varTrafficPercentInput": temp, "ctrlTrafficPercentInput": temp2}
+        })
+        setActualData((previous) => {
+            return {...previous, "varTrafficPercentInput": temp, "ctrlTrafficPercentInput": temp2}
+        })
+    }
+
+    function blurTraffic1(event){
+        var temp = Math.round(100*event.target.value)/100;
+        var temp2 = Math.round(100*(100-temp))/100;
+        if(temp>100){temp=100; temp2=0;}
+        if(temp<0){temp=0; temp2=100;}
+        setData((previous) => {
+            return {...previous, "ctrlTrafficPercentInput": temp, "varTrafficPercentInput": temp2}
+        })
+        if(temp == 100 || temp == 0){
+            setActualData((previous) => {
+            return {...previous, "ctrlTrafficPercentInput": temp, "varTrafficPercentInput": temp2}
+        })}
+    }
+
+    function handleDev(event){
+        inputChange(event);
+        setActualData((previous) => {
+            return {...previous, "pooledStandardDeviationInput": event.target.value}
+            })
+    }
+
+    function blurDev(event){
+        var temp = Math.round(100*event.target.value)/100;
+        setData((previous) => {
+            return { ...previous, "pooledStandardDeviationInput": temp}
+        })
+    }
+
+    function unblurDev(){
+        setData((previous) => {
+            return { ...previous, "pooledStandardDeviationInput": actualData.pooledStandardDeviationInput}
+        })
+    }
+
+    function blurTraffic2(event){
+        var temp = Math.round(100*event.target.value)/100;
+        var temp2 = Math.round(100*(100-temp))/100;
+        if(temp>100){temp=100; temp2=0;}
+        if(temp<0){temp=0; temp2=100;}
+        setData((previous) => {
+            return {...previous, "varTrafficPercentInput": temp, "ctrlTrafficPercentInput": temp2}
+        })
+        if(temp == 100 || temp == 0){
+            setActualData((previous) => {
+            return {...previous, "varTrafficPercentInput": temp, "ctrlTrafficPercentInput": temp2}
+        })}
+    }
+
+    function unblurTraffic(){
+        setData((previous) => {
+            return { ...previous, "ctrlTrafficPercentInput": actualData.ctrlTrafficPercentInput, "varTrafficPercentInput": actualData.varTrafficPercentInput}
+        })
     }
 
     return (
@@ -53,15 +162,18 @@ export default function ContinuousPreTestCalculator() {
                                     className="desiredLift"
                                     variant="standard"
                                     required={true}
-                                    placeholder="1.5"
+                                    value = {formData.desiredLiftInput}
                                     type="number"
                                     name="desiredLiftInput"
                                     label="Desired Lift"
+                                    onKeyPress={(e) => (inputValid(e, /[0-9, .]/))}
                                     InputProps={{
                                         endAdornment: <InputAdornment position="end">%</InputAdornment>
                                     }}
                                     InputLabelProps={{shrink: true}}
-                                    onChange={inputChange}
+                                    onChange={handleLift}
+                                    onBlur={blurLift}
+                                    onFocus={unblurLift}
                                 >
                                 </TextField>
                             </Tooltip>
@@ -71,14 +183,16 @@ export default function ContinuousPreTestCalculator() {
                                     className="ctrlBaselineRev"
                                     variant="standard"
                                     required={true}
-                                    placeholder="20"
+                                    value={formData.conBaseRevInput}
                                     type="number"
                                     name="conBaseRevInput"
                                     label="Baseline Revenue, Control Group"
+                                    onKeyPress={(e) => (inputValid(e, /[0-9, .]/))}
                                     InputProps={{
                                         startAdornment: <InputAdornment position="start">$</InputAdornment>
                                     }}
                                     onChange={inputChange}
+                                    onBlur={blurRevenue}
                                     InputLabelProps={{shrink: true}}
                                 >
                                 </TextField>
@@ -89,14 +203,17 @@ export default function ContinuousPreTestCalculator() {
                                     className="ctrlTrafficPercent"
                                     variant="standard"
                                     required={true}
-                                    placeholder="35"
+                                    value={formData.ctrlTrafficPercentInput}
                                     type="number"
                                     name="ctrlTrafficPercentInput"
                                     label="Percentage of traffic in Control Group"
+                                    onKeyPress={(e) => (inputValid(e, /[0-9, .]/))}
                                     InputProps={{
                                         endAdornment: <InputAdornment position="end">%</InputAdornment>
                                     }}
-                                    onChange={inputChange}
+                                    onChange={handleTraffic1}
+                                    onBlur={blurTraffic1}
+                                    onFocus={unblurTraffic}
                                     InputLabelProps={{shrink: true}}
                                 >
                                 </TextField>
@@ -107,14 +224,17 @@ export default function ContinuousPreTestCalculator() {
                                     className="varTrafficPercent"
                                     variant="standard"
                                     required={true}
-                                    placeholder="35"
+                                    value={formData.varTrafficPercentInput}
                                     type="number"
                                     name="varTrafficPercentInput"
                                     label="Percentage of traffic in Variant Group"
+                                    onKeyPress={(e) => (inputValid(e, /[0-9, .]/))}
                                     InputProps={{
                                         endAdornment: <InputAdornment position="end">%</InputAdornment>
                                     }}
-                                    onChange={inputChange}
+                                    onChange={handleTraffic2}
+                                    onBlur={blurTraffic2}
+                                    onFocus={unblurTraffic}
                                     InputLabelProps={{shrink: true}}
                                 >
                                 </TextField>
@@ -157,10 +277,11 @@ export default function ContinuousPreTestCalculator() {
                                     className="dailyVisitors"
                                     variant="standard"
                                     required={true}
-                                    placeholder="20"
+                                    value={formData.dailyVisitorsInput}
                                     type="number"
                                     name="dailyVisitorsInput"
                                     label="Total Number of Daily Visitors (both groups)"
+                                    onKeyPress={(e) => (inputValid(e, /[0-9]/))}
                                     onChange={inputChange}
                                     InputLabelProps={{shrink: true}}
                                 >
@@ -172,11 +293,14 @@ export default function ContinuousPreTestCalculator() {
                                     className="pooledStandardDeviation"
                                     variant="standard"
                                     required={true}
-                                    placeholder="1"
+                                    value={formData.pooledStandardDeviationInput}
                                     name="pooledStandardDeviationInput"
                                     type="number"
                                     label="Estimate of Pooled Standard Deviation"
-                                    onChange={inputChange}
+                                    onKeyPress={(e) => (inputValid(e, /[0-9, .]/))}
+                                    onChange={handleDev}
+                                    onBlur={blurDev}
+                                    onFocus={unblurDev}
                                     InputLabelProps={{shrink: true}}
                                 >
                                 </TextField>
@@ -250,7 +374,7 @@ export default function ContinuousPreTestCalculator() {
                                 }
                             }}
                             type="number"
-                            value={(varSampleSize).toFixed(2)}
+                            value={varSampleSize}
                             label="Sample Size, Variant"
                             InputLabelProps={{shrink: true}}
                         >
