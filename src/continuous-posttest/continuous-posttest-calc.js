@@ -1,4 +1,4 @@
-import { Box, FormControl, InputAdornment, TextField, Button, Container, Tooltip, Typography, Slider } from '@mui/material'
+import { Box, FormControl, InputAdornment, TextField, Button, Container, Tooltip, Typography, Slider, Table, TableRow, TableCell, TableContainer } from '@mui/material'
 import React, { useState } from "react";
 import jstat from 'jstat';
 import Accordion from '@mui/material/Accordion';
@@ -6,12 +6,12 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ContinousFormulas from './continous-posttest-formulas';
 import ContinuousDefinitions from '../continuous-definitions/continuousDefinitions';
+import norminv from 'norminv';
 
 
 export default function ContPostTest() {
 
     const [isDetailed, setDetail] = useState(true); //toggle tooltip state
-    const [daysNeeded, setDaysNeeded] = useState(0);
 
     const [inputs, setInputs] = useState({ //input states
         avgRevVar: 0,
@@ -20,31 +20,14 @@ export default function ContPostTest() {
         stdDevCtrl: 0,
         sampleSizeVar: 0,
         sampleSizeCtrl: 0,
-        confidenceLvl: 80,
+        confidenceLvl: 95,
         testDuration: 0
     })
 
     //average revenue difference calculation
     const avgRevDif = (+inputs.avgRevVar - +inputs.avgRevCtrl).toFixed(2);
 
-    //Get input from textboxes
-    const handleInputChange = (e) => {
-        if (!isNaN(e.target.value)) {
-            const { name, value } = e.target;
-            setInputs((prev) => {
-                return { ...prev, [name]: parseInt(value, 10) };
-            });
-        }
-        // console.log(1-(1-(((.01*++inputs.confidenceLvl)/2))))
-        console.log(+daysNeeded)
-        if (!reject) {
-            calcDays()
-            //setDaysNeeded(0);
-        }
-        else {
-           calcDays()
-        }
-    };
+    
 
     //check for whole numbers
     function inputValid(event, regex) {
@@ -53,27 +36,17 @@ export default function ContPostTest() {
         }
     }
 
-    //Pooled Standard Deviation
-    const bottom = (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2); //These are bad names I know, they refer to the denominator and both parts of the numerator
-    const topLeft = (+inputs.sampleSizeVar - 1) * Math.pow(+inputs.stdDevVar, 2);
-    const topRight = ((+inputs.sampleSizeCtrl - 1) * Math.pow(+inputs.stdDevCtrl, 2));
-    const SP = (Math.sqrt((topRight + topLeft) / bottom));
+    const conditionSatisfied = (
+        inputs.sampleSizeVar >= 30 &&
+        inputs.sampleSizeCtrl >= 30 &&
+        ((Math.max(inputs.stdDevVar, inputs.stdDevCtrl)/Math.min(inputs.avgRevVar, inputs.sampleSizeCtrl)) < 3)
+    )
 
-    //Set the conclusion text based on the our calculated values and level of detail
-    // const doConclusion = () => {
-    //     if (+pVal <= (1 - (+inputs.confidenceLvl / 100)) && isDetailed === true) {
-    //         setConclusion("Statistically significant");
-    //     }
-    //     else if (+pVal > (1 - (+inputs.confidenceLvl / 100)) && isDetailed === true) {
-    //         setConclusion("Not statistically significant");
-    //     }
-    //     else if (+pVal <= (1 - (+inputs.confidenceLvl / 100)) && isDetailed === false) {
-    //         setConclusion("There is evidence the revenues of the 2 groups is different");
-    //     }
-    //     else {
-    //         setConclusion("not enough evidence that the revenues of both groups are different");
-    //     }
-    // }
+        //observed lift calculation
+        const lift = ((+avgRevDif / +inputs.avgRevCtrl) * 100).toFixed(2)
+
+    //Pooled Standard Deviation
+    const SP = (Math.sqrt(((+inputs.sampleSizeVar - 1) * Math.pow(+inputs.stdDevVar, 2) + ((+inputs.sampleSizeCtrl - 1) * Math.pow(+inputs.stdDevCtrl, 2))) / (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2)));
 
 
     //margin of error used in the calculations of the confidence intervals
@@ -84,13 +57,7 @@ export default function ContPostTest() {
     }
 
     //Calculates the number of additional days needed for testing
-    function calcDays() {
-        const p = (1 - (1 - (((.01 * + +inputs.confidenceLvl) / 2))))
-        const part1 = Math.pow(+inputs.sampleSizeCtrl / +inputs.sampleSizeVar, -1);
-        const part2 = (SP * ((jstat.normal.inv(+p, 0, 1)) + jstat.normal.inv(.8, 0, 1)) / +avgRevDif) //I think error is here
-        const part3 = (+lift / +inputs.testDuration) //percentage conversion for lift may cause and issue
-        setDaysNeeded((Math.ceil((1 + (+part1 * +part2)) / +part3) - +inputs.testDuration)) 
-    }
+    const daysNeeded = (Math.ceil(((1 + Math.pow((+inputs.sampleSizeCtrl/+inputs.sampleSizeVar),-1))*(Math.pow((SP * ( (norminv((1 - ((1-(0.01* +inputs.confidenceLvl))/2)), 0, 1) + norminv(0.8, 0, 1))  / +avgRevDif  )),2 ))) / (+inputs.sampleSizeVar / +inputs.testDuration)) - +inputs.testDuration);
 
     //confidence interval calculations
     const confidenceIntevalUpper = +avgRevDif + marginOfError();
@@ -100,37 +67,34 @@ export default function ContPostTest() {
     const denominatorTS = (SP * Math.sqrt(((1 / +inputs.sampleSizeCtrl) + (1 / +inputs.sampleSizeVar))));
     const testStat = (+avgRevDif / +denominatorTS).toFixed(3);
 
-    //calculate the pooled standard deviation
-    function calcSP() {
-        var bottom = (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2); //These are bad names I know, they refer to the denominator and both parts of the numerator
-        var topLeft = (+inputs.sampleSizeVar - 1) * Math.pow(+inputs.stdDevVar, 2);
-        var topRight = ((+inputs.sampleSizeCtrl - 1) * Math.pow(+inputs.stdDevCtrl, 2));
-        var SP = (Math.sqrt((topRight + topLeft) / bottom));
-        return SP;
-    }
-
-
     //p value calculation using the jstat library https://jstat.github.io/distributions.html#jStat.studentt.pdf
     const pVal = jstat.studentt.pdf(+testStat, (+inputs.sampleSizeCtrl + +inputs.sampleSizeVar - 2), 2).toFixed(2);
-
-    //observed lift calculation
-    const lift = ((+avgRevDif / +inputs.avgRevCtrl) * 100).toFixed(2)
 
     //confidence interval for lift
     const liftConfidenceIntervalUp = ((+avgRevDif + marginOfError()) / +inputs.avgRevCtrl) * 100;
     const lifConfidenceIntevalLow = ((+avgRevDif - marginOfError()) / +inputs.avgRevCtrl) * 100;
 
-    const reject = (+pVal <= (1 - (+inputs.confidenceLvl / 100)));
+    const reject = (pVal <= (1 - (+inputs.confidenceLvl / 100)));
+
+    //Get input from textboxes
+    const handleInputChange = (e) => {
+        if (!isNaN(e.target.value)) {
+            const { name, value } = e.target;
+            setInputs((prev) => {
+                return { ...prev, [name]: parseInt(value, 10) };
+            });
+        }
+    };
 
     return (
         <>
             <Container maxWidth="xl" sx={{ paddingBottom: "4ch" }}>
-                <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltip Detail</Button>
+                {/* <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltip Detail</Button> */}
                 <div className="container">
-                    <Box className='Input-form-box' boxShadow='-2px 3px 3px'>
+                    <Box className='Input-form-box'>
                         <div className="Form-title">Insert Numbers Here</div>
                         <FormControl>
-                            <Tooltip title={isDetailed === true ? "The average reveanue for the group tested" : ""} placement="left" >
+                            <Tooltip title={"The average revenue for the group tested"} placement="left" >
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                     className="Avg-Rev-Var"
                                     variant="standard"
@@ -143,11 +107,11 @@ export default function ContPostTest() {
                                     defaultValue={""}
                                     onChange={handleInputChange}
                                     onKeyPress={(e) => {
-                                        inputValid(e, /[0-9]/);
+                                        inputValid(e, /[0-9, .]/);
                                     }}
                                 />
                             </Tooltip>
-                            <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
+                            <Tooltip title={"The average revenue for the group being compared"} placement="left">
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                     className="Avg-Rev-Ctrl"
                                     variant="standard"
@@ -164,7 +128,7 @@ export default function ContPostTest() {
                                     }}
                                 />
                             </Tooltip>
-                            <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
+                            <Tooltip title={"The dispersion of the data compared to the mean for the variant group"} placement="left">
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                     className="Std-Dev-Var"
                                     variant="standard"
@@ -181,7 +145,7 @@ export default function ContPostTest() {
                                     }}
                                 />
                             </Tooltip>
-                            <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
+                            <Tooltip title={"The dispersion of the data compared to the mean for the control group"} placement="left">
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                     className="Std-Dev-Ctrl"
                                     variant="standard"
@@ -198,7 +162,7 @@ export default function ContPostTest() {
                                     }}
                                 />
                             </Tooltip>
-                            <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
+                            <Tooltip title={"The number of people exposed to the variant test"} placement="left">
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                     className="Sample-Size-Var"
                                     variant="standard"
@@ -215,7 +179,7 @@ export default function ContPostTest() {
                                     }}
                                 />
                             </Tooltip>
-                            <Tooltip title={isDetailed === true ? "Suggested value is 80%" : ""} placement="left">
+                            <Tooltip title={"The number of people exposed to the control test"} placement="left">
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                     className="Sample-Size-Ctrl"
                                     variant="standard"
@@ -233,7 +197,7 @@ export default function ContPostTest() {
                                 />
                             </Tooltip>
                             <Typography>Confidence Level</Typography>
-                            <Tooltip title={isDetailed === true ? "Suggested value range is 80% - 95%" : ""} placement="left">
+                            <Tooltip title={"Used in the confidence interval to choose how confident we are that our data is within a specific range"} placement="left">
                                 <Slider
                                     name="confidenceLvl"
                                     aria-label="Confidence Level"
@@ -247,16 +211,16 @@ export default function ContPostTest() {
                                     onChange={handleInputChange}
                                 />
                             </Tooltip>
-                            <Tooltip title={isDetailed === true ? "Something" : ""} placement="left" >
+                            <Tooltip title={"The number of days the test was offered for"} placement="left" >
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
-                                    className="testDuration-input"
+                                    className="testDuration"
                                     variant="standard"
                                     required={true}
                                     placeholder="5"
                                     type="number"
                                     color='primary'
                                     label="Test duration in days"
-                                    name='testDuration-input'
+                                    name='testDuration'
                                     InputLabelProps={{ shrink: true }}
                                     onChange={handleInputChange}
                                     onKeyPress={(e) => {
@@ -267,10 +231,10 @@ export default function ContPostTest() {
 
                         </FormControl>
                     </Box>
-                    <Box className='Input-form-box' boxShadow='0px 3px 3px'>
+                    <Box className='Input-form-box' justifyContent={'start'}>
                         <div className="Form-title">Outputs</div>
                         <FormControl>
-                            <Tooltip title={isDetailed === true ? "The difference between the averages of the variant versus control group" : ""} placement="left">
+                            <Tooltip title={"The difference between the averages of the variant versus control group"} placement="left">
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                     variant="filled"
                                     className='Avg-Rev-Out'
@@ -282,7 +246,7 @@ export default function ContPostTest() {
                                 >
                                 </TextField>
                             </Tooltip>
-                            <Tooltip title={isDetailed === true ? "Shows how closely your observed data match the distribution expected under the null hypothesis." : ""} placement="left">
+                            <Tooltip title={"Shows how closely your observed data match the distribution expected under the null hypothesis."} placement="left">
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                     variant="filled"
                                     className='Test-Stat-Out'
@@ -293,7 +257,7 @@ export default function ContPostTest() {
                                 >
                                 </TextField>
                             </Tooltip>
-                            <Tooltip title={isDetailed === true ? "The probability of obtaining results at least as extreme as the observed results, assuming the null hypothesis is true." : ""} placement="left">
+                            <Tooltip title={"The probability of obtaining results at least as extreme as the observed results, assuming the null hypothesis is true."} placement="left">
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                     variant="filled"
                                     className='P-Value-out'
@@ -305,7 +269,7 @@ export default function ContPostTest() {
                                 >
                                 </TextField>
                             </Tooltip>
-                            <Tooltip title={isDetailed === true ? "How confident we are that the revenue difference is in this interval" : ""} placement="left">
+                            <Tooltip title={"How confident we are that the revenue difference is in this interval"} placement="left">
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                     variant='filled'
                                     className='Confidence-Interval-Out'
@@ -316,7 +280,7 @@ export default function ContPostTest() {
                                 >
                                 </TextField>
                             </Tooltip>
-                            <Tooltip title={isDetailed === true ? "Percent increase or decrease in metric for users who received a variant versus a control group" : ""} placement="left">
+                            <Tooltip title={"Percent increase or decrease in metric for users who received a variant versus a control group"} placement="left">
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                     variant="filled"
                                     className='lift-out'
@@ -332,7 +296,7 @@ export default function ContPostTest() {
                                 </TextField>
                             </Tooltip>
                             <Tooltip
-                                title={isDetailed === true ? "We " + inputs.confidenceLvl + "% are confident that the true revenue lift is within the interval" : ""} placement="left">
+                                title={"We " + inputs.confidenceLvl + "% are confident that the true revenue lift is within the interval"} placement="left">
                                 <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
                                     variant="filled"
                                     className='Lift-Confidence-Interval-Out'
@@ -344,23 +308,17 @@ export default function ContPostTest() {
                                 >
                                 </TextField>
                             </Tooltip>
-                            <Tooltip title={isDetailed === true ? "Days needed for more testing, no days needed if the test is statistically significant" : ""} placement="left">
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
-                                    variant="filled"
-                                    className='Additional-Days-out'
-                                    id="outlined"
-                                    label={"Additional days needed"}
-                                    inputProps={{ readOnly: true }}
-                                    InputLabelProps={{ shrink: true }}
-                                    value={+daysNeeded}
-                                >
-                                </TextField>
-                            </Tooltip>
                         </FormControl>
                     </Box>
-                    <Box className='Input-form-box' boxShadow='2px 3px 3px'>
-                        <div hidden={reject} style={{ color: "red", backgroundColor: "#b05d5d", fontWeight: 'bold' }}>Test inconclusive </div>
-                        <div hidden={!reject} style={{ color: "green", backgroundColor: "#6eb05d", fontWeight: 'bold'}}>Is statistically significant</div>
+                    <Box className='Input-form-box'>
+                        <div hidden={reject} style={{ color: "black", backgroundColor: "#b05d5d", fontWeight: 'bold' }}>Test inconclusive </div>
+                        <div hidden={!reject} style={{ color: "black", backgroundColor: "#6eb05d", fontWeight: 'bold'}}>Is statistically significant</div>
+                        <TableContainer>
+                        <Table>
+                            <TableRow><TableCell style={{ textAlign: "center" }} colSpan={2}><b><i>Checking Assumptions</i></b></TableCell></TableRow>
+                            <TableRow><TableCell>Assumptions satisfied?</TableCell><TableCell>{String(conditionSatisfied).toUpperCase()}</TableCell></TableRow>
+                        </Table>
+                    </TableContainer>
                         <Accordion>
                             <AccordionSummary
                                 expandIcon={"▼"}
@@ -370,14 +328,29 @@ export default function ContPostTest() {
                                 <Typography>Additional Interpretations</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <Typography hidden={!reject && (+avgRevDif >= 0)}>The variant group performed significantly better than the control group</Typography>
-                                <Typography hidden={!reject && (+avgRevDif < 0)}>The control group performed significantly better than the variant group</Typography>
+                                <Typography hidden={!reject}>{avgRevDif > 0 ? "The variant group performed significantly better than the control group" : "The Control performed significantly better than the Variant"}</Typography>
+                                <Typography hidden={!reject}>{avgRevDif > 0 ? "We are " + +inputs.confidenceLvl + "% confident that the Variant will perform $" + (confidenceIntevalLower).toPrecision(4) +  " to $" + (confidenceIntevalUpper).toPrecision(4) + " better than the Control":
+                                "We are " + +inputs.confidenceLvl + "% confident that the Control will perform $" + (confidenceIntevalLower).toPrecision(4) + " to $" + (confidenceIntevalUpper).toPrecision(4) + " better than the Variant"}
+                                </Typography>
                                 <Typography hidden={reject}>The test was inconclusive there is no evidence one group outperformed the other</Typography>
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion>
+                            <AccordionSummary
+                                expandIcon={"▼"}
+                                aria-controls="panel3a-content"
+                                id="panel3a-header"
+                            >
+                                <Typography>More Results</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                            <Typography hidden={!reject}>No additional days needed</Typography>
+                            <Typography hidden={reject}> Additional Days Needed: {daysNeeded}</Typography>
                             </AccordionDetails>
                         </Accordion>
                     </Box>
                 </div>
-                <ContinousFormulas />
+                <ContinousFormulas params={inputs} pooledstd={SP} satisfied={conditionSatisfied}/>
                 <ContinuousDefinitions/>
             </Container>
         </>

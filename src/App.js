@@ -69,7 +69,7 @@ function App() {
         changeData(<BinomialPostTestCalculator />)
         break;
       default:
-        changeData(<div>OOPS</div>);
+        changeData(<ContPostTest />);
     }
   }, [activePage])
 
