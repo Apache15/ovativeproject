@@ -40,6 +40,14 @@ sup {
     text-align: center;
     justify-content: space-between;
 }
+.Accordion-box{
+    padding:5px;
+    margin-top:10px;
+    margin-bottom: 10px;
+    border-color: black;
+    border-style:solid;
+    border-radius: 10px;
+}
 
 Tooltip{
     font: 1000;
