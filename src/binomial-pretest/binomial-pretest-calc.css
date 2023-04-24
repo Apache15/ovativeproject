@@ -1,60 +1,68 @@
 .textField {
-    color: black;
+  color: black;
 }
 
 div{
-    color:black;
+  color:black;
 }
 .description{
-    width:50%;
+  width:50%;
 }
 td{
-    width:fit-content;
+  width:fit-content;
 }
 tr{
-    text-align:center;
+  text-align:center;
 }
 sup { 
-    vertical-align: top; 
-    font-size: 0.6em; 
+  vertical-align: top; 
+  font-size: 0.6em; 
 }
 .InputBox, .OutputBox{
-    display:flex;
-    padding:20px;
-    justify-content: space-between;
-    flex-direction: column;
-    border-color:black;
-    border-style:solid;
-    border-radius: 10px;
-    width:25%;
-    height:auto;
+  display:flex;
+  padding:20px;
+  justify-content: space-between;
+  flex-direction: column;
+  border-color:black;
+  border-style:solid;
+  border-radius: 10px;
+  width:25%;
+  height:auto;
 }
 .BoxLabel{
-    font-size:20px;
-    color:black;
-    padding-left: 5px;
-    padding-bottom: 10px;
+  font-size:20px;
+  color:black;
+  padding-left: 5px;
+  padding-bottom: 10px;
 }
 .BodyContainers {
-    display: flex;
-    text-align: center;
-    justify-content: space-between;
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+}
+.Accordion-box{
+  padding:5px;
+  margin-top:10px;
+  margin-bottom: 10px;
+  border-color: black;
+  border-style:solid;
+  border-radius: 10px;
 }
 
 Tooltip{
-    font: 1000;
+  font: 1000;
 }
 @keyframes fade-in {
-    from {
-      opacity: 0%;
-    }
-    to {
-      opacity: 100%;
-    }
+  from {
+    opacity: 0%;
   }
-  .body-container{
-    animation: .25s ease-out 0s 1 fade-in;
+  to {
+    opacity: 100%;
   }
-  .tooltip-text{
-    color:white;
-  }
+}
+.body-container{
+  animation: .25s ease-out 0s 1 fade-in;
+}
+.tooltip-text{
+  color:white;
+}

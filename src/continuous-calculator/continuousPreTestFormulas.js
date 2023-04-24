@@ -12,7 +12,8 @@ export default function ContinousPreTestFormulas() {
 
     return (
         <>
-            <Accordion sx={{ marginTop: "2ch" }}>
+        <Box className='Line-box' sx={{ marginTop: "2ch" }}>
+            <Accordion >
                 <AccordionSummary
                     expandIcon={"▼"}
                     aria-controls="panel3a-content"
@@ -21,6 +22,7 @@ export default function ContinousPreTestFormulas() {
                     <div className="header">Formulas and Notation</div>
                 </AccordionSummary>
                 <AccordionDetails sx={{ display: 'flex', padding: "0ch", borderTop: "1px solid rgba(0, 0, 0, .25) " }}>
+                    
                     <Box className='col' width='65%' sx={{ margin: '0ch 0ch 0ch 4ch', padding: '1ch' }}>
                         <Typography align='center' fontWeight='bold'>Formulas</Typography>
                         <Grid container spacing={1}>
@@ -51,6 +53,7 @@ export default function ContinousPreTestFormulas() {
 
                 </AccordionDetails>
             </Accordion>
+            </Box>
         </>
     )
 }
