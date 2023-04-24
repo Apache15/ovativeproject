@@ -159,7 +159,7 @@ export default function ContinousFormulas(props) {
                                 </TableRow>
                             </Table>
                         </TableContainer>
-                        <div style={{ fontWeight: "bold", border: "2px solid black", marginBottom: "10px", padding: "10px" }}>Are all conditions satisfied? <span style={{ fontWeight: "normal", color: props.satisfied ? "#6eb05d" : "#b05d5d" }}>{props.satisfied ? "True" : "False"}</span></div>
+                        <div style={{ fontWeight: "bold", border: "2px solid black", marginBottom: "10px", marginTop:"10px", padding: "10px" }}>Are all conditions satisfied? <span style={{ fontWeight: "normal", color: props.satisfied ? "#6eb05d" : "#b05d5d" }}>{props.satisfied ? "True" : "False"}</span></div>
                     </AccordionDetails>
                 </Accordion>
             </Box>
@@ -175,14 +175,14 @@ export default function ContinousFormulas(props) {
                     </AccordionSummary>
                     <AccordionDetails sx={{ display: 'flow', padding: "1ch", borderTop: "1px solid rgba(0, 0, 0, .25) " }}>
                         <Typography marginBottom='1ch'><b>First define the research question:</b> Are the revenues for the variant and control groups significantly different?</Typography>
-                        <Box border='2px solid black' boxShadow='0px 3px 2px'>
+                        <Box className="Line-box">
                             <Typography align='center'><b>Next, state the null and alternative hypothesis</b></Typography>
                             <Typography margin='0 0 0 2ch'><i>H</i><sub>0</sub>: µ<sub>1</sub> = µ<sub>2</sub>  <Tab />µ<sub>1</sub> - Population revenue for the variant group</Typography>
                             <Typography margin='0 0 1ch 2ch'><i>H</i><sub>1</sub>: µ<sub>1</sub> ≠ µ<sub>2</sub>  <Tab margin /> µ<sub>2</sub> - Population revenue rate for the control rate</Typography>
                             <Typography margin='0 0 0 2ch'> <b>NULL HYPOTHESIS: (<i>H</i><sub>0</sub>) </b> - The population revenues for the control group and the variant group are the same </Typography>
                             <Typography margin='0 0 0 2ch'> <b>ALTERNATIVE HYPOTHESIS: (<i>H</i><sub>1</sub> or <i>H</i><sub>A</sub>)</b> - The population revenues for the control group and the variant group are not the same </Typography>
                         </Box>
-                        <Box border='2px solid black' boxShadow='0px 3px 2px' margin='1ch 0 0 0'>
+                        <Box className="Line-box">
                             <Typography align='center'><b>Next, calculate the test statistic and p-value</b></Typography>
                             <Typography marginLeft='2ch'><b>Calculate the test statisitic, t</b></Typography>
                             <Typography marginLeft='2ch'>- This is automatically calculated as "Test statistic" on the calculator output</Typography>
@@ -194,7 +194,7 @@ export default function ContinousFormulas(props) {
                             </Typography>
                             <Typography margin='0 0 1ch 2ch'>⁃ We use a general rule-of-thumb that "unlikely enough" is defined as a p-value that is less than the significance level (typically 0.05)</Typography>
                         </Box>
-                        <Box border='2px solid black' boxShadow='0px 3px 2px' margin='1ch 0 0 0'>
+                        <Box className="Line-box">
                             <Typography align='center'><b>Last, make a conclusion based on the p-value</b></Typography>
                             <Typography margin='0 0 1ch 2ch'>If pvalue {lessThan} {alpha}, We reject the null hypothesis  (There is a statistically significant evidence that the conversion rates in the control and variant are different)</Typography>
                             <Typography margin='0 0 1ch 2ch'>If pvalue {greaterEqualTo} {alpha}, We fail to reject the null hypothesis (The test is inconclusive)</Typography>

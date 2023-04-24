@@ -68,7 +68,6 @@ export default function BinomialPostTestCalculator() {
         if (!isNaN(input.target.value)) {
             const name = input.target.name;
             const value = input.target.value;
-            console.log(value);
             setData((previous) => {
                 return { ...previous, [name]: parseInt(value, 10) }
             })
@@ -258,7 +257,7 @@ export default function BinomialPostTestCalculator() {
                                 style: { textAlign: 'right' }
                             }
                         }}
-                        value={(liftEstimate * 100).toPrecision(4)}
+                        value={+(liftEstimate * 100).toPrecision(4)}
                         type="number"
                         label="Calculated Lift %"
                         InputLabelProps={{ shrink: true }}
@@ -286,7 +285,7 @@ export default function BinomialPostTestCalculator() {
                         <AccordionDetails>
                             <Typography hidden={rejectHypothesis}>No significant difference.</Typography>
                             <Typography hidden={!rejectHypothesis}>{conRateDifference > 0 ? "The Variant performed significantly better than the Control" : "The Control performed significantly better than the Variant"}</Typography>
-                            <Typography hidden={!rejectHypothesis}>{conRateDifference > 0 ? "We are " + (1 - (1 - (0.01 * +formData.confidenceLevel)) / 2) * 100 + "% confident that the Variant will perform " + (100 * confIntDiffLow).toPrecision(4) + "% to " + (100 * confIntDiffHigh).toPrecision(4) + "% better than the Control" : "We are " + (1 - (1 - (0.01 * +formData.confidenceLevel)) / 2) * 100 + "% confident that the Control will perform " + Math.abs(100 * confIntDiffLow).toPrecision(4) + "% to " + Math.abs(100 * confIntDiffHigh).toPrecision(4) + "% better than the Variant"}</Typography>
+                            <Typography hidden={!rejectHypothesis}>{conRateDifference > 0 ? "We are " + (Math.round((1 - (1 - (0.01 * +formData.confidenceLevel)) / 2) * 100*100)/100).toPrecision(4) + "% confident that the Variant will perform " + (100 * confIntDiffLow).toPrecision(4) + "% to " + (100 * confIntDiffHigh).toPrecision(4) + "% better than the Control" : "We are " + (Math.round((1 - (1 - (0.01 * +formData.confidenceLevel)) / 2) * 100*100)/100).toPrecision(4) + "% confident that the Control will perform " + Math.abs(100 * confIntDiffLow).toPrecision(4) + "% to " + Math.abs(100 * confIntDiffHigh).toPrecision(4) + "% better than the Variant"}</Typography>
                         </AccordionDetails>
                     </Accordion>
                     <Accordion onChange={handleChange('panel2')} expanded={expanded === 'panel2'}>
@@ -472,7 +471,7 @@ export default function BinomialPostTestCalculator() {
                             </TableRow>
                         </Table>
                     </TableContainer>
-                    <div style={{ fontWeight: "bold", border: "2px solid black", marginBottom: "10px", padding: "10px" }}>Are all conditions satisfied? <span style={{ fontWeight: "normal", color: conditionSatisfied ? "#6eb05d" : "#b05d5d" }}>{conditionSatisfied ? "True" : "False"}</span></div>
+                    <div style={{ fontWeight: "bold", border: "2px solid black", marginBottom: "10px", marginTop:"10px", padding: "10px" }}>Are all conditions satisfied? <span style={{ fontWeight: "normal", color: conditionSatisfied ? "#6eb05d" : "#b05d5d" }}>{conditionSatisfied ? "True" : "False"}</span></div>
                 </Accordion>
             </Box>
             <Box className="Line-box">
