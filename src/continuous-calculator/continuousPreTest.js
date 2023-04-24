@@ -16,7 +16,7 @@ export default function ContinuousPreTestCalculator() {
         confidenceLvlInput: 0,
         statisticalPowerInput: 0,
         dailyVisitorsInput: 0
-        
+
     })
 
     const groupSizeRatio = (formData.ctrlTrafficPercentInput * 0.01) / (formData.varTrafficPercentInput * 0.01);
@@ -40,7 +40,7 @@ export default function ContinuousPreTestCalculator() {
             const name = input.target.name;
             const value = input.target.value;
             setData((previous) => {
-                return {...previous, [name]: value}
+                return { ...previous, [name]: value }
             })
         }
     }
