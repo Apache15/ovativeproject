@@ -164,7 +164,7 @@ export default function BinomialPostTestCalculator() {
                         >
                         </TextField>
                         <Tooltip title={"Enter a value between 80-99. Typically, 95"} placement="left" >
-                            <Typography color="grey"><InfoOutlinedIcon /> Number of Conversions, Variant</Typography>
+                            <Typography color="grey"><InfoOutlinedIcon /> Confidence Level</Typography>
                         </Tooltip>
                         <Slider
                             name="confidenceLevel"
