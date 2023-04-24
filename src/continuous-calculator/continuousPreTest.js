@@ -314,7 +314,7 @@ export default function ContinuousPreTestCalculator() {
                                     className="pooledStandardDeviation"
                                     variant="standard"
                                     required={true}
-                                    placeholder="1"
+                                    value={formData.pooledStandardDeviationInput}
                                     name="pooledStandardDeviationInput"
                                     type="number"
                                     label="Estimate of Pooled Standard Deviation"
