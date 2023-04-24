@@ -1,6 +1,6 @@
 import {TextField, InputAdornment, FormControl, Box, Tooltip, Button, Slider, Typography, Container} from "@mui/material";
 import "./continuousPreTest.css"
-import jstat from 'jstat';
+import jStat from 'jstat';
 import React, {useState} from "react";
 import ContinousPreTestFormulas from "../continuous-calculator/continuousPreTestFormulas";
 import ContinuousDefinitions from "../continuous-definitions/continuousDefinitions";
@@ -23,7 +23,7 @@ export default function ContinuousPreTestCalculator() {
         desiredLiftInput: 1.5,
         pooledStandardDeviationInput: 1,
     })
-
+    
     const groupSizeRatio = (actualData.ctrlTrafficPercentInput * 0.01) / (actualData.varTrafficPercentInput * 0.01);
     const varGroupRevenue = formData.conBaseRevInput * (1 + (actualData.desiredLiftInput * .01));
     const revAbsoluteDiff = Math.abs(formData.conBaseRevInput - varGroupRevenue);
@@ -147,7 +147,11 @@ export default function ContinuousPreTestCalculator() {
             return { ...previous, "ctrlTrafficPercentInput": actualData.ctrlTrafficPercentInput, "varTrafficPercentInput": actualData.varTrafficPercentInput}
         })
     }
-
+    function inputValid(event, regex){
+        if (!regex.test(event.key)) {
+            event.preventDefault();
+        }
+    }
     return (
         <>
             <Container maxWidth="xl" sx={{ paddingBottom: "4ch" }}>
