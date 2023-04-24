@@ -6,7 +6,7 @@ import SPimg from './SP.png';
 import CLimg from './ConfidenceInterval.png';
 import DOFimg from './DOF.png';
 import TSimg from './TestStat.png';
-import { Box, Tooltip, Typography, Grid, Tab, Table, TableRow, TableCell, Paper, TableContainer, TableHead } from '@mui/material'
+import { Box, Tooltip, Typography, Tab, Table, TableRow, TableCell, Paper, TableContainer, TableHead } from '@mui/material'
 
 export default function ContinousFormulas(props) {
 
