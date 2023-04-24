@@ -1,4 +1,4 @@
-import {TextField, InputAdornment, FormControl, Box, Tooltip, Button, Slider, Typography, Container} from "@mui/material";
+import {TextField, InputAdornment, FormControl, Box, Tooltip, Button, Slider, Typography, Container, formHelperTextClasses} from "@mui/material";
 import "./continuousPreTest.css"
 import jStat from 'jstat';
 import React, {useState} from "react";
@@ -8,23 +8,29 @@ import ContinuousDefinitions from "../continuous-definitions/continuousDefinitio
 export default function ContinuousPreTestCalculator() {
     const [isDetailed, setDetail] = useState(true);
     const [formData, setData] = useState({
-        ctrlTrafficPercentInput: 0,
-        varTrafficPercentInput: 0,
-        conBaseRevInput: 0,
-        desiredLiftInput: 0,
-        pooledStandardDeviationInput: 0,
-        confidenceLvlInput: 0,
-        statisticalPowerInput: 0,
-        dailyVisitorsInput: 0
-
+        ctrlTrafficPercentInput: 50,
+        varTrafficPercentInput: 50,
+        conBaseRevInput: 10.06,
+        desiredLiftInput: 1.5,
+        pooledStandardDeviationInput: 1,
+        confidenceLvlInput: 95,
+        statisticalPowerInput: 80,
+        dailyVisitorsInput: 20
+    })
+    const [actualData, setActualData] = useState({
+        ctrlTrafficPercentInput: 50,
+        varTrafficPercentInput: 50,
+        desiredLiftInput: 1.5,
+        pooledStandardDeviationInput: 1,
     })
 
-    const groupSizeRatio = (formData.ctrlTrafficPercentInput * 0.01) / (formData.varTrafficPercentInput * 0.01);
-    const varGroupRevenue = formData.conBaseRevInput * (1 + (formData.desiredLiftInput * .01));
+    const groupSizeRatio = (actualData.ctrlTrafficPercentInput * 0.01) / (actualData.varTrafficPercentInput * 0.01);
+    const varGroupRevenue = formData.conBaseRevInput * (1 + (actualData.desiredLiftInput * .01));
     const revAbsoluteDiff = Math.abs(formData.conBaseRevInput - varGroupRevenue);
-    const varSampleSize = (1 + (1 / groupSizeRatio)) * (Math.pow( formData.pooledStandardDeviationInput * ( (jStat.normal.inv(((1 - ((1 - (formData.confidenceLvlInput * 0.01))) / 2), 0, 1)) + 
-        jStat.normal.inv((formData.statisticalPowerInput * 0.01), 0, 1)) / (formData.conBaseRevInput - varGroupRevenue))),2);
-    const conSampleSize = (varSampleSize * groupSizeRatio);
+    const tempA = 1 + (1/groupSizeRatio);
+    const tempB = actualData.pooledStandardDeviationInput*((jStat.normal.inv((1-((1-(.0001*formData.confidenceLvlInput))/2)), 0, 1) + jStat.normal.inv((.0001*formData.statisticalPowerInput), 0, 1)) / (formData.conBaseRevInput-varGroupRevenue));
+    const varSampleSize = Math.ceil(tempA*tempB*tempB);
+    const conSampleSize = Math.ceil(varSampleSize * groupSizeRatio);
     const totalSampleSize = (varSampleSize + conSampleSize);
     const testRunDays = Math.ceil(totalSampleSize / formData.dailyVisitorsInput);
     const testRunWeeks = Math.ceil(testRunDays / 7);
@@ -45,6 +51,122 @@ export default function ContinuousPreTestCalculator() {
         }
     }
 
+    function handleLift(event){
+        inputChange(event);
+        setActualData((previous) => {
+            return {...previous, "desiredLiftInput": event.target.value}
+            })
+    }
+
+    function blurLift(event){
+        var temp = Math.round(100*event.target.value)/100;
+        setData((previous) => {
+            return { ...previous, "desiredLiftInput": temp}
+        })
+    }
+
+    function unblurLift(){
+        setData((previous) => {
+            return { ...previous, "desiredLiftInput": actualData.desiredLiftInput}
+        })
+    }
+
+    function blurRevenue(event){
+        var temp = Math.ceil(event.target.value*100)/100;
+        setData((previous) => {
+            return { ...previous, "conBaseRevInput": temp}
+        })
+    }
+
+    function handleTraffic1(event){
+        var temp = event.target.value;
+        var temp2 = 100-temp;
+        setData((previous) => {
+            return {...previous, "ctrlTrafficPercentInput": temp, "varTrafficPercentInput": temp2}
+        })
+        setActualData((previous) => {
+        return {...previous, "ctrlTrafficPercentInput": temp, "varTrafficPercentInput": temp2}
+        })
+    }
+    
+    function handleTraffic2(event){
+        var temp = event.target.value;
+        var temp2 = 100-temp;
+        setData((previous) => {
+            return {...previous, "varTrafficPercentInput": temp, "ctrlTrafficPercentInput": temp2}
+        })
+        setActualData((previous) => {
+            return {...previous, "varTrafficPercentInput": temp, "ctrlTrafficPercentInput": temp2}
+        })
+    }
+
+    function blurTraffic1(event){
+        var temp = Math.round(100*event.target.value)/100;
+        var temp2 = Math.round(100*(100-temp))/100;
+        if(temp>100){temp=100; temp2=0;}
+        if(temp<0){temp=0; temp2=100;}
+        setData((previous) => {
+            return {...previous, "ctrlTrafficPercentInput": temp, "varTrafficPercentInput": temp2}
+        })
+        if(temp == 100 || temp == 0){
+            setActualData((previous) => {
+            return {...previous, "ctrlTrafficPercentInput": temp, "varTrafficPercentInput": temp2}
+        })}
+    }
+
+    function blurTraffic2(event){
+        var temp = Math.round(100*event.target.value)/100;
+        var temp2 = Math.round(100*(100-temp))/100;
+        if(temp>100){temp=100; temp2=0;}
+        if(temp<0){temp=0; temp2=100;}
+        setData((previous) => {
+            return {...previous, "varTrafficPercentInput": temp, "ctrlTrafficPercentInput": temp2}
+        })
+        if(temp == 100 || temp == 0){
+            setActualData((previous) => {
+            return {...previous, "varTrafficPercentInput": temp, "ctrlTrafficPercentInput": temp2}
+        })}
+    }
+
+    function unblurTraffic(){
+        setData((previous) => {
+            return { ...previous, "ctrlTrafficPercentInput": actualData.ctrlTrafficPercentInput, "varTrafficPercentInput": actualData.varTrafficPercentInput}
+        })
+    }
+
+    function handleDev(event){
+        inputChange(event);
+        setActualData((previous) => {
+            return {...previous, "pooledStandardDeviationInput": event.target.value}
+            })
+    }
+
+    function blurDev(event){
+        var temp = Math.round(100*event.target.value)/100;
+        setData((previous) => {
+            return { ...previous, "pooledStandardDeviationInput": temp}
+        })
+    }
+
+    function unblurDev(){
+        setData((previous) => {
+            return { ...previous, "pooledStandardDeviationInput": actualData.pooledStandardDeviationInput}
+        })
+    }
+
+
+    /*const processField3Change = (inputElement)=> {
+        var newCont = inputElement.target.value;
+        if (newCont < 0) newCont = 0;
+        if (newCont > 100) newCont = 100;
+        var newVar = Math.round(100 * (1 - (.01 * newCont)) * 100) / 100;
+        setData((previous) => {
+            return { ...previous, "varTrafficPercentInput": newVar }
+        })
+        
+        console.log(formData.varTrafficPercentInput);
+      }*/
+
     return (
         <>
             <Container maxWidth="xl" sx={{ paddingBottom: "4ch" }}>
@@ -55,76 +177,83 @@ export default function ContinuousPreTestCalculator() {
                         <FormControl>
                             <Tooltip title={isDetailed === true ? "Suggested value is 1.5%" : ""} placement="left">
                                 <TextField
-                                    sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                    sx={{ m: "1ch", }}
                                     className="desiredLift"
                                     variant="standard"
                                     required={true}
-                                    placeholder="1.5"
+                                    value = {formData.desiredLiftInput}
                                     type="number"
                                     name="desiredLiftInput"
                                     label="Desired Lift"
-                                    onKeyPress={(e) => (this.inputValid(e, /[0-9, .]/))}
+                                    onKeyPress={(e) => (inputValid(e, /[0-9, .]/))}
                                     InputProps={{
                                         endAdornment: <InputAdornment position="end">%</InputAdornment>
                                     }}
                                     InputLabelProps={{shrink: true}}
-                                    onChange={inputChange}
+                                    onChange={handleLift}
+                                    onBlur={blurLift}
+                                    onFocus={unblurLift}
                                 >
                                 </TextField>
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested Value is $10.06" : ""} placement="left">
                                 <TextField
-                                    sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                    sx={{ m: "1ch", }}
                                     className="ctrlBaselineRev"
                                     variant="standard"
                                     required={true}
-                                    placeholder="10.06"
+                                    value={formData.conBaseRevInput}
                                     type="number"
                                     name="conBaseRevInput"
                                     label="Baseline Revenue, Control Group"
-                                    onKeyPress={(e) => (this.inputValid(e, /[0-9, .]/))}
+                                    onKeyPress={(e) => (inputValid(e, /[0-9, .]/))}
                                     InputProps={{
                                         startAdornment: <InputAdornment position="start">$</InputAdornment>
                                     }}
                                     onChange={inputChange}
+                                    onBlur={blurRevenue}
                                     InputLabelProps={{shrink: true}}
                                 >
                                 </TextField>
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested Value is 50%" : ""} placement="left">
                                 <TextField
-                                    sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                    sx={{ m: "1ch", }}
                                     className="ctrlTrafficPercent"
                                     variant="standard"
                                     required={true}
-                                    placeholder="50"
+                                    value={formData.ctrlTrafficPercentInput}
                                     type="number"
                                     name="ctrlTrafficPercentInput"
                                     label="Percentage of traffic in Control Group"
-                                    onKeyPress={(e) => (this.inputValid(e, /[0-9, .]/))}
+                                    onKeyPress={(e) => (inputValid(e, /[0-9, .]/))}
                                     InputProps={{
                                         endAdornment: <InputAdornment position="end">%</InputAdornment>
                                     }}
-                                    onChange={inputChange}
+                                    onChange={handleTraffic1}
+                                    onBlur={blurTraffic1}
+                                    onFocus={unblurTraffic}
                                     InputLabelProps={{shrink: true}}
                                 >
                                 </TextField>
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested Value is 50%" : ""} placement="left">
                                 <TextField 
-                                    sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                    sx={{ m: "1ch", }}
                                     className="varTrafficPercent"
                                     variant="standard"
                                     required={true}
-                                    placeholder="50"
+                                    value={formData.varTrafficPercentInput}
                                     type="number"
                                     name="varTrafficPercentInput"
                                     label="Percentage of traffic in Variant Group"
-                                    onKeyPress={(e) => (this.inputValid(e, /[0-9, .]/))}
+                                    onKeyPress={(e) => (inputValid(e, /[0-9, .]/))}
                                     InputProps={{
                                         endAdornment: <InputAdornment position="end">%</InputAdornment>
                                     }}
-                                    onChange={inputChange}
+                                    onChange={handleTraffic2}
+                                    onBlur={blurTraffic2}
+                                    onFocus={unblurTraffic}
                                     InputLabelProps={{shrink: true}}
                                 >
                                 </TextField>
@@ -165,15 +294,15 @@ export default function ContinuousPreTestCalculator() {
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested Value is 20" : ""} placement="left">
                                 <TextField
-                                    sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                    sx={{ m: "1ch", }}
                                     className="dailyVisitors"
                                     variant="standard"
                                     required={true}
-                                    placeholder="20"
+                                    value={formData.dailyVisitorsInput}
                                     type="number"
                                     name="dailyVisitorsInput"
                                     label="Total Number of Daily Visitors (both groups)"
-                                    onKeyPress={(e) => (this.inputValid(e, /[0-9, .]/))}
+                                    onKeyPress={(e) => (inputValid(e, /[0-9]/))}
                                     onChange={inputChange}
                                     InputLabelProps={{shrink: true}}
                                 >
@@ -181,7 +310,7 @@ export default function ContinuousPreTestCalculator() {
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested Value is 1" : ""} placement="left">
                                 <TextField
-                                    sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                    sx={{ m: "1ch", }}
                                     className="pooledStandardDeviation"
                                     variant="standard"
                                     required={true}
@@ -189,8 +318,10 @@ export default function ContinuousPreTestCalculator() {
                                     name="pooledStandardDeviationInput"
                                     type="number"
                                     label="Estimate of Pooled Standard Deviation"
-                                    onKeyPress={(e) => (this.inputValid(e, /[0-9, .]/))}
-                                    onChange={inputChange}
+                                    onKeyPress={(e) => (inputValid(e, /[0-9, .]/))}
+                                    onChange={handleDev}
+                                    onBlur={blurDev}
+                                    onFocus={unblurDev}
                                     InputLabelProps={{shrink: true}}
                                 >
                                 </TextField>
@@ -200,7 +331,7 @@ export default function ContinuousPreTestCalculator() {
                     <Box className="Input-form-box">
                         <div className="Form-title">Conversions</div>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="groupTrafficSizeRatio"
                             variant="filled"
                             InputProps={{
@@ -217,7 +348,7 @@ export default function ContinuousPreTestCalculator() {
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="varRevenue"
                             variant="filled"
                             InputProps={{
@@ -235,7 +366,7 @@ export default function ContinuousPreTestCalculator() {
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="revenueAbsoluteDiff"
                             variant="filled"
                             InputProps={{
@@ -253,7 +384,7 @@ export default function ContinuousPreTestCalculator() {
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="varSampleSize"
                             variant="filled"
                             InputProps={{
@@ -264,13 +395,13 @@ export default function ContinuousPreTestCalculator() {
                                 }
                             }}
                             type="number"
-                            value={(varSampleSize).toFixed(2)}
+                            value={varSampleSize}
                             label="Sample Size, Variant"
                             InputLabelProps={{shrink: true}}
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="ctrlSampleSize"
                             variant="filled"
                             InputProps={{
@@ -281,13 +412,13 @@ export default function ContinuousPreTestCalculator() {
                                 }
                             }}
                             type="number"
-                            value={(conSampleSize).toFixed()}
+                            value={conSampleSize}
                             label="Sample Size, Control"
                             InputLabelProps={{shrink: true}}
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="totalSampleSize"
                             variant="filled"
                             InputProps={{
@@ -304,7 +435,7 @@ export default function ContinuousPreTestCalculator() {
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="runTestDays"
                             variant="filled"
                             InputProps={{
@@ -321,7 +452,7 @@ export default function ContinuousPreTestCalculator() {
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="runTestWeeks"
                             variant="filled"
                             InputProps={{
