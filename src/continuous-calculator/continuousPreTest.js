@@ -1,4 +1,4 @@
-import {TextField, InputAdornment, FormControl, Box, Tooltip, Button, Slider, Typography, Container} from "@mui/material";
+import {TextField, InputAdornment, FormControl, Box, Tooltip, Button, Slider, Typography, Container, formHelperTextClasses} from "@mui/material";
 import "./continuousPreTest.css"
 import jStat from 'jstat';
 import React, {useState} from "react";
@@ -45,6 +45,18 @@ export default function ContinuousPreTestCalculator() {
         }
     }
 
+    /*const processField3Change = (inputElement)=> {
+        var newCont = inputElement.target.value;
+        if (newCont < 0) newCont = 0;
+        if (newCont > 100) newCont = 100;
+        var newVar = Math.round(100 * (1 - (.01 * newCont)) * 100) / 100;
+        setData((previous) => {
+            return { ...previous, "varTrafficPercentInput": newVar }
+        })
+        
+        console.log(formData.varTrafficPercentInput);
+      }*/
+
     return (
         <>
             <Container maxWidth="xl" sx={{ paddingBottom: "4ch" }}>
@@ -55,7 +67,7 @@ export default function ContinuousPreTestCalculator() {
                         <FormControl>
                             <Tooltip title={isDetailed === true ? "Suggested value is 1.5%" : ""} placement="left">
                                 <TextField
-                                    sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                    sx={{ m: "1ch", }}
                                     className="desiredLift"
                                     variant="standard"
                                     required={true}
@@ -74,7 +86,7 @@ export default function ContinuousPreTestCalculator() {
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested Value is $10.06" : ""} placement="left">
                                 <TextField
-                                    sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                    sx={{ m: "1ch", }}
                                     className="ctrlBaselineRev"
                                     variant="standard"
                                     required={true}
@@ -93,7 +105,7 @@ export default function ContinuousPreTestCalculator() {
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested Value is 50%" : ""} placement="left">
                                 <TextField
-                                    sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                    sx={{ m: "1ch", }}
                                     className="ctrlTrafficPercent"
                                     variant="standard"
                                     required={true}
@@ -112,7 +124,7 @@ export default function ContinuousPreTestCalculator() {
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested Value is 50%" : ""} placement="left">
                                 <TextField 
-                                    sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                    sx={{ m: "1ch", }}
                                     className="varTrafficPercent"
                                     variant="standard"
                                     required={true}
@@ -165,7 +177,7 @@ export default function ContinuousPreTestCalculator() {
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested Value is 20" : ""} placement="left">
                                 <TextField
-                                    sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                    sx={{ m: "1ch", }}
                                     className="dailyVisitors"
                                     variant="standard"
                                     required={true}
@@ -181,7 +193,7 @@ export default function ContinuousPreTestCalculator() {
                             </Tooltip>
                             <Tooltip title={isDetailed === true ? "Suggested Value is 1" : ""} placement="left">
                                 <TextField
-                                    sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                    sx={{ m: "1ch", }}
                                     className="pooledStandardDeviation"
                                     variant="standard"
                                     required={true}
@@ -200,7 +212,7 @@ export default function ContinuousPreTestCalculator() {
                     <Box className="Input-form-box">
                         <div className="Form-title">Conversions</div>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="groupTrafficSizeRatio"
                             variant="filled"
                             InputProps={{
@@ -217,7 +229,7 @@ export default function ContinuousPreTestCalculator() {
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="varRevenue"
                             variant="filled"
                             InputProps={{
@@ -235,7 +247,7 @@ export default function ContinuousPreTestCalculator() {
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="revenueAbsoluteDiff"
                             variant="filled"
                             InputProps={{
@@ -253,7 +265,7 @@ export default function ContinuousPreTestCalculator() {
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="varSampleSize"
                             variant="filled"
                             InputProps={{
@@ -270,7 +282,7 @@ export default function ContinuousPreTestCalculator() {
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="ctrlSampleSize"
                             variant="filled"
                             InputProps={{
@@ -287,7 +299,7 @@ export default function ContinuousPreTestCalculator() {
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="totalSampleSize"
                             variant="filled"
                             InputProps={{
@@ -304,7 +316,7 @@ export default function ContinuousPreTestCalculator() {
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="runTestDays"
                             variant="filled"
                             InputProps={{
@@ -321,7 +333,7 @@ export default function ContinuousPreTestCalculator() {
                         >
                         </TextField>
                         <TextField
-                            sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                            sx={{ m: "1ch", }}
                             className="runTestWeeks"
                             variant="filled"
                             InputProps={{

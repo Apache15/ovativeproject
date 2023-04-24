@@ -95,7 +95,7 @@ export default function ContPostTest() {
                         <div className="Form-title">Insert Numbers Here</div>
                         <FormControl>
                             <Tooltip title={"The average revenue for the group tested"} placement="left" >
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     className="Avg-Rev-Var"
                                     variant="standard"
                                     required={true}
@@ -112,7 +112,7 @@ export default function ContPostTest() {
                                 />
                             </Tooltip>
                             <Tooltip title={"The average revenue for the group being compared"} placement="left">
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     className="Avg-Rev-Ctrl"
                                     variant="standard"
                                     required={true}
@@ -129,7 +129,7 @@ export default function ContPostTest() {
                                 />
                             </Tooltip>
                             <Tooltip title={"The dispersion of the data compared to the mean for the variant group"} placement="left">
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     className="Std-Dev-Var"
                                     variant="standard"
                                     required={true}
@@ -146,7 +146,7 @@ export default function ContPostTest() {
                                 />
                             </Tooltip>
                             <Tooltip title={"The dispersion of the data compared to the mean for the control group"} placement="left">
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     className="Std-Dev-Ctrl"
                                     variant="standard"
                                     required={true}
@@ -163,7 +163,7 @@ export default function ContPostTest() {
                                 />
                             </Tooltip>
                             <Tooltip title={"The number of people exposed to the variant test"} placement="left">
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     className="Sample-Size-Var"
                                     variant="standard"
                                     required={true}
@@ -180,7 +180,7 @@ export default function ContPostTest() {
                                 />
                             </Tooltip>
                             <Tooltip title={"The number of people exposed to the control test"} placement="left">
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     className="Sample-Size-Ctrl"
                                     variant="standard"
                                     required={true}
@@ -223,7 +223,7 @@ export default function ContPostTest() {
                                 />
                             </Tooltip>
                             <Tooltip title={"The number of days the test was offered for"} placement="left" >
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     className="testDuration"
                                     variant="standard"
                                     required={true}
@@ -246,7 +246,7 @@ export default function ContPostTest() {
                         <div className="Form-title">Outputs</div>
                         <FormControl>
                             <Tooltip title={"The difference between the averages of the variant versus control group"} placement="left">
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     variant="filled"
                                     className='Avg-Rev-Out'
                                     id="outlined"
@@ -258,7 +258,7 @@ export default function ContPostTest() {
                                 </TextField>
                             </Tooltip>
                             <Tooltip title={"Shows how closely your observed data match the distribution expected under the null hypothesis."} placement="left">
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     variant="filled"
                                     className='Test-Stat-Out'
                                     id="outlined"
@@ -270,7 +270,7 @@ export default function ContPostTest() {
                                 </TextField>
                             </Tooltip>
                             <Tooltip title={"The probability of obtaining results at least as extreme as the observed results, assuming the null hypothesis is true."} placement="left">
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     variant="filled"
                                     className='P-Value-out'
                                     id="outlined"
@@ -282,7 +282,7 @@ export default function ContPostTest() {
                                 </TextField>
                             </Tooltip>
                             <Tooltip title={"How confident we are that the revenue difference is in this interval"} placement="left">
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     variant='filled'
                                     className='Confidence-Interval-Out'
                                     id="outlined"
@@ -293,7 +293,7 @@ export default function ContPostTest() {
                                 </TextField>
                             </Tooltip>
                             <Tooltip title={"Percent increase or decrease in metric for users who received a variant versus a control group"} placement="left">
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     variant="filled"
                                     className='lift-out'
                                     id="outlined"
@@ -309,7 +309,7 @@ export default function ContPostTest() {
                             </Tooltip>
                             <Tooltip
                                 title={"We " + inputs.confidenceLvl + "% are confident that the true revenue lift is within the interval"} placement="left">
-                                <TextField sx={{ m: "1ch", input: { color: 'black' }, label: { color: 'black' } }}
+                                <TextField sx={{ m: "1ch",   }}
                                     variant="filled"
                                     className='Lift-Confidence-Interval-Out'
                                     id="outlined"
