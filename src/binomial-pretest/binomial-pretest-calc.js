@@ -129,13 +129,13 @@ export default function BiPretest(){
   //Displays the full values upon selection of either TextField
   function updateFields3And4DisplayA(){
     setData((previous) => {
-      return { ...previous, "trafficControl": actualData.trafficControl, "trafficVariant": actualData.trafficVariant, "trafficRatio": actualData.trafficRatio }
+      return { ...previous, "trafficControl": actualData.trafficControl, "trafficVariant": actualData.trafficVariant }
     })
   }
   //Displays the rounded values upon selection off either TextField
   function updateFields3And4DisplayB(){
-    var tempCont = Math.round(formData.trafficControl*100)/100;
-    var tempVar = Math.round(formData.trafficVariant*100)/100;
+    var tempCont = formData.trafficControl;
+    var tempVar = formData.trafficVariant;
     if(tempCont < 0){
       tempCont = 0;
       tempVar = 100;
@@ -145,7 +145,7 @@ export default function BiPretest(){
       tempVar = 0;
     }
     setData((previous) => {
-      return { ...previous, "trafficControl": tempCont, "trafficVariant": tempVar, "trafficRatio": Math.round(tempCont*100/tempVar)/100 }
+      return { ...previous, "trafficControl": Math.round(tempCont*100)/100, "trafficVariant": Math.round(tempVar*100)/100, "trafficRatio": Math.round(tempCont*100/tempVar)/100 }
     })
     setActualData((previous) => {
       return { ...previous, "trafficControl": tempCont, "trafficVariant": tempVar, "trafficRatio": tempCont/tempVar }
