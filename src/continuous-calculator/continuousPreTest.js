@@ -101,17 +101,16 @@ export default function ContinuousPreTestCalculator() {
     }
 
     function blurTraffic1(event){
-        var temp = Math.round(100*event.target.value)/100;
+        var temp = event.target.value;
         var temp2 = Math.round(100*(100-temp))/100;
         if(temp>100){temp=100; temp2=0;}
         if(temp<0){temp=0; temp2=100;}
         setData((previous) => {
-            return {...previous, "ctrlTrafficPercentInput": temp, "varTrafficPercentInput": temp2}
+            return {...previous, "ctrlTrafficPercentInput": Math.round(100*temp)/100, "varTrafficPercentInput": Math.round(100*temp2)/100}
         })
-        if(temp == 100 || temp == 0){
-            setActualData((previous) => {
-            return {...previous, "ctrlTrafficPercentInput": temp, "varTrafficPercentInput": temp2}
-        })}
+        setActualData((previous) => {
+        return {...previous, "ctrlTrafficPercentInput": temp, "varTrafficPercentInput": temp2}
+        })
     }
 
     function blurTraffic2(event){
