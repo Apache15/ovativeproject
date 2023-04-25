@@ -12,6 +12,7 @@ export default function BiPretest(){
         trafficControl: 50, trafficVariant: 50, trafficRatio: 1, confLevel: 90, 
         statPower: 80, dailyVisitors: 600, sampleVariant: 2234, sampleControl: 2234, sampleTotal: 4468, days: 8, weeks: 2});
   const [actualData, setActualData] = useState({desiredLift: 42.86, convRateControl: 3.5, trafficControl: 50, trafficVariant: 50, trafficRatio: 1});
+  const [isDetailed, setDetail] = useState(true); //toggle tooltips use state
   //Handles Showing/Hiding detailed information
   function changeDetail(){
     if(formData.hidden === true){
@@ -226,9 +227,9 @@ export default function BiPretest(){
 
   return(
     <div className='body-container'>
-    <div className="Button">
-      {/*<Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="changeDetail" variant="contained" onClick={this.changeDetail.bind(this)}>Toggle Tooltips</Button>*/}
-    </div>
+      <Box sx={{display: 'flex', justifyContent:'center',width: 'max', paddingRight: '5%'}}>
+                <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button>
+      </Box>
       <div className="BodyContainers">
         <Box className="InputBox">
           <div className="BoxLabel">Inputs</div>
