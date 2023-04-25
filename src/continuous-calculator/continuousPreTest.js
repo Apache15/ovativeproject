@@ -60,7 +60,9 @@ export default function ContinuousPreTestCalculator() {
     return (
         <>
             <Container maxWidth="xl" sx={{ paddingBottom: "4ch" }}>
-                { /* <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button> */}
+            <Box sx={{display: 'flex', justifyContent:'center',width: 'max', paddingRight: '5%'}}>
+                    <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button>
+                </Box>
                 <div className="container">
                     <Box className="Input-form-box">
                         <div className="Form-title">Insert Numbers Here</div>
