@@ -129,13 +129,13 @@ export default function BiPretest(){
   //Displays the full values upon selection of either TextField
   function updateFields3And4DisplayA(){
     setData((previous) => {
-      return { ...previous, "trafficControl": actualData.trafficControl, "trafficVariant": actualData.trafficVariant, "trafficRatio": actualData.trafficRatio }
+      return { ...previous, "trafficControl": actualData.trafficControl, "trafficVariant": actualData.trafficVariant }
     })
   }
   //Displays the rounded values upon selection off either TextField
   function updateFields3And4DisplayB(){
-    var tempCont = Math.round(formData.trafficControl*100)/100;
-    var tempVar = Math.round(formData.trafficVariant*100)/100;
+    var tempCont = formData.trafficControl;
+    var tempVar = formData.trafficVariant;
     if(tempCont < 0){
       tempCont = 0;
       tempVar = 100;
@@ -145,7 +145,7 @@ export default function BiPretest(){
       tempVar = 0;
     }
     setData((previous) => {
-      return { ...previous, "trafficControl": tempCont, "trafficVariant": tempVar, "trafficRatio": Math.round(tempCont*100/tempVar)/100 }
+      return { ...previous, "trafficControl": Math.round(tempCont*100)/100, "trafficVariant": Math.round(tempVar*100)/100, "trafficRatio": Math.round(tempCont*100/tempVar)/100 }
     })
     setActualData((previous) => {
       return { ...previous, "trafficControl": tempCont, "trafficVariant": tempVar, "trafficRatio": tempCont/tempVar }
@@ -167,9 +167,9 @@ export default function BiPretest(){
     inputChange(inputElement);
     calculateRuntime(inputElement.target.value, 2);
   }
-  //Rounds the value to the next whole number upon selection off the TextField
+  //Rounds the value to the nearest whole number upon selection off the TextField
   function updateField7Value(){
-    var newVal = Math.ceil(formData.dailyVisitors);
+    var newVal = Math.round(formData.dailyVisitors);
     if(newVal<0){newVal=0;}
     setData((previous) => {
       return { ...previous, "dailyVisitors": newVal}
@@ -187,8 +187,8 @@ export default function BiPretest(){
     else if(field===6){stat = val/100;}
     var temp1 = ((crCont*(1-crCont))/traf)+(crVar*(1-crVar));
     var temp2 = ((jStat.normal.inv(1-((1-(conf))/2), 0, 1)+(jStat.normal.inv(stat,0,1)))/(crCont-crVar));
-    var trafficV = Math.ceil(temp1*temp2*temp2);
-    var trafficC = Math.ceil(formData.trafficRatio*trafficV);
+    var trafficV = Math.round(temp1*temp2*temp2);
+    var trafficC = Math.round(formData.trafficRatio*trafficV);
     var trafficT = trafficV + trafficC;
     setData((previous) => {
       return { ...previous, "sampleVariant": trafficV, "sampleControl": trafficC, "sampleTotal": trafficT }
@@ -199,12 +199,12 @@ export default function BiPretest(){
   function calculateRuntime(val, field){ 
     if(field===1){
       setData((previous) => {
-        return { ...previous, "days": Math.ceil(val/formData.dailyVisitors), "weeks": Math.ceil((val/7)/formData.dailyVisitors) }
+        return { ...previous, "days": Math.round(val/formData.dailyVisitors), "weeks": Math.round((val/7)/formData.dailyVisitors) }
       })
     }
     if(field===2){
       setData((previous) => {
-        return { ...previous, "days": Math.ceil(formData.sampleTotal/val), "weeks": Math.ceil(formData.sampleTotal/7/val) }
+        return { ...previous, "days": Math.round(formData.sampleTotal/val), "weeks": Math.round(formData.sampleTotal/7/val) }
       })
     }
   }
@@ -232,22 +232,27 @@ export default function BiPretest(){
       <div className="BodyContainers">
         <Box className="InputBox">
           <div className="BoxLabel">Inputs</div>
-          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The desired percent increase in metric for users receiving the variant versus the control group</div> : ""} placement="right" arrow>
+          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">0 &lt; Desired Lift<br></br>The desired positive percent increase in metric for users receiving the variant versus the control group</div> : ""} placement="right" arrow>
             <TextField label="Desired Lift" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} type="number" name="desiredLift"
               InputProps={{ inputProps: { max: 100, min: 10 }, endAdornment: <InputAdornment position="end">%</InputAdornment>}} onChange={processField1Change} 
               onFocus={updateField1DisplayA} onBlur={updateField1DisplayB} onKeyPress={(e) => {inputValid(e, /[0-9, .]/)}} value={formData.desiredLift}/>
           </Tooltip>
-          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The current conversion rate of successful actions taken divided by the number of visitors to the page</div> : ""} placement="right" arrow> 
+          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">𝑝<sub>𝐶</sub>, 0 &lt; 𝑝<sub>𝐶</sub> &lt; 100<br></br>
+            The current conversion rate of successful actions taken divided by the number of visitors to the page</div> : ""} placement="right" arrow> 
             <TextField label="Baseline Conversion Rate, Control Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} name="convRateControl" type="number" 
               onChange={processField2Change} onFocus={updateField2DisplayA} onBlur={updateField2DisplayB} onKeyPress={(e) => {inputValid(e, /[0-9, .]/)}} 
               value={formData.convRateControl}/>
           </Tooltip>
-          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The percentage of the total sample size that will use the control rather than the variant</div> : ""} placement="right" arrow>
+          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">0 &lt; Traffic% &lt; 100 <br></br>
+            Control% + Variant% = 100%<br></br>
+            The percentage of the total sample size that will use the control rather than the variant</div> : ""} placement="right" arrow>
             <TextField label="Percentage of traffic in Control Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} name="trafficControl" 
               InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} type="number" onChange={processField3Change} 
               onFocus={updateFields3And4DisplayA} onBlur={updateFields3And4DisplayB} onKeyPress={(e) => {inputValid(e, /[0-9, .]/)}} value={formData.trafficControl}/> 
           </Tooltip>
-          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The percentage of the total sample size that will use the variant rather than the control</div> : ""} placement="right" arrow>
+          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">0 &lt; Traffic% &lt; 100 <br></br>
+            Control% + Variant% = 100%<br></br>
+            The percentage of the total sample size that will use the variant rather than the control</div> : ""} placement="right" arrow>
             <TextField label="Percentage of traffic in Variant Group" variant="standard" sx={{ m: 1 }} InputLabelProps={{ shrink: true }} name="trafficVariant" 
               InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} type="number" onChange={processField4Change} 
               onFocus={updateFields3And4DisplayA} onBlur={updateFields3And4DisplayB} onKeyPress={(e) => {inputValid(e, /[0-9, .]/)}} value={formData.trafficVariant}/> 
@@ -269,32 +274,36 @@ export default function BiPretest(){
         </Box>
         <Box className="OutputBox">
           <div className="BoxLabel">Outputs</div>
-          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The conversion rate for the variant group required to meet the desired lift of the baseline conversion rate</div> : ""} placement="left" arrow>
+          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">𝑝<sub>𝑉</sub><br></br>
+            The conversion rate for the variant group required to meet the desired lift of the baseline conversion rate</div> : ""} placement="left" arrow>
             <TextField label="Conversion Rate, Variant Group" variant="filled" sx={{ m: 1}} InputProps={{color: "black",endAdornment: 
               <InputAdornment position="end">%</InputAdornment>,readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
               InputLabelProps={{ shrink: true }} id="convRateVariant" type="number" value={formData.convRateVariant.toFixed(2)}/>
           </Tooltip>
-          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The % of traffic in the control group divided by the % of traffic in the variant group</div> : ""} placement="left" arrow>
+          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">𝜅<br></br>
+            The % of traffic in the control group divided by the % of traffic in the variant group</div> : ""} placement="left" arrow>
             <TextField label="Ratio of the two group traffic sizes" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,
               inputProps: {style: { textAlign: 'right' }}}} InputLabelProps={{ shrink: true }} name="trafficRatio" type="number" value={formData.trafficRatio}/>
           </Tooltip>
-          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The sample size required for the variant group, rounded up</div> : ""} placement="left" arrow>
+          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">𝑛<sub>𝑉</sub><br></br>
+            The sample size required for the variant group, rounded to the nearest whole number</div> : ""} placement="left" arrow>
             <TextField label="Sample Size, Variant" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
               InputLabelProps={{ shrink: true }} id="sampleVariant" type="number" value={formData.sampleVariant}/>
           </Tooltip>
-          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The sample size required for the control group, rounded up</div> : ""} placement="left" arrow>
+          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">𝑛<sub>𝐶</sub><br></br>
+            The sample size required for the control group, rounded to the nearest whole number</div> : ""} placement="left" arrow>
             <TextField label="Sample Size, Control" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
               InputLabelProps={{ shrink: true }} id="sampleControl" type="number" value={formData.sampleControl}/>
           </Tooltip>
-          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The variant sample size plus the control sample size</div> : ""} placement="left" arrow>
+          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">𝑛<br></br>The variant sample size plus the control sample size</div> : ""} placement="left" arrow>
             <TextField label="Total Sample Size" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
               InputLabelProps={{ shrink: true }} id="sampleTotal" type="number" value={formData.sampleTotal}/>
           </Tooltip>
-          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The number of days the test will take to run, rounded up</div> : ""} placement="left" arrow>
+          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The number of days the test will take to run, rounded to the nearest whole number</div> : ""} placement="left" arrow>
             <TextField label="Days to run the test" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
               InputLabelProps={{ shrink: true }} id="days" type="number" value={formData.days}/>
           </Tooltip>
-          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The number of weeks the test will take to run, rounded up</div> : ""} placement="left" arrow>
+          <Tooltip title={formData.hidden === false ? <div className="tooltip-text">The number of weeks the test will take to run, rounded to the nearest whole number</div> : ""} placement="left" arrow>
             <TextField label="Weeks to run the test" variant="filled" sx={{ m: 1 }} InputProps={{color: "black", readOnly: true,inputProps: {style: { textAlign: 'right' }}}}
               InputLabelProps={{ shrink: true }} id="weeks" type="number" value={formData.weeks}/>
           </Tooltip>
@@ -343,4 +352,4 @@ export default function BiPretest(){
       </div>
     </div>
   )
-}
+} 
