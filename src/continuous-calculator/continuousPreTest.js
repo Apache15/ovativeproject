@@ -169,12 +169,13 @@ export default function ContinuousPreTestCalculator() {
     return (
         <>
             <Container maxWidth="xl" sx={{ paddingBottom: "4ch" }}>
-                { /* <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button> */}
+                <Box sx={{display: 'flex', justifyContent:'center',width: 'max', paddingRight: '5%'}}>
+                    <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button>
+                </Box>
                 <div className="container">
                     <Box className="Input-form-box">
                         <div className="Form-title">Insert Numbers Here</div>
-                        <FormControl>
-                            <Tooltip title={isDetailed === true ? <div className="tooltip-text">0 &lt; Desired Lift<br></br>The desired positive percent increase in metric for users receiving the variant versus the control group</div> : ""} placement="right">
+                        <Tooltip title={isDetailed === true ? <div className="tooltip-text">0 &lt; Desired Lift<br></br>The desired positive percent increase in metric for users receiving the variant versus the control group</div> : ""} placement="right">
                                 <TextField
                                     sx={{ m: "1ch", }}
                                     className="desiredLift"
@@ -335,7 +336,6 @@ export default function ContinuousPreTestCalculator() {
                                 >
                                 </TextField>
                             </Tooltip>
-                        </FormControl>
                     </Box>
                     <Box className="Input-form-box">
                         <div className="Form-title">Conversions</div>
