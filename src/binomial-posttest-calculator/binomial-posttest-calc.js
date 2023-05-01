@@ -1,4 +1,4 @@
-import { TextField, InputAdornment, FormControl, Box, Tooltip, Slider, TableRow, Table, TableHead, TableCell, TableContainer, Paper } from "@mui/material";
+import { TextField, InputAdornment, FormControl, Box, Tooltip, Slider, TableRow, Table, TableHead, TableCell, TableContainer, Paper, Button } from "@mui/material";
 import "./binomial-posttest-calc.css"
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -9,6 +9,7 @@ import norminv from 'norminv';
 import testStatImg from './testStat.png'
 import confIntervalImg from './confInterval.png'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import ContinuousDefinitions from '../continuous-definitions/continuousDefinitions';
 
 export default function BinomialPostTestCalculator() {
     //const [isDetailed, setDetail] = useState(true);
@@ -16,6 +17,7 @@ export default function BinomialPostTestCalculator() {
     const handleChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     };
+    const [isDetailed, setDetail] = useState(true); //toggle tooltips use state
     const [formData, setData] = useState({
         conVarInput: 0,
         trafficVarInput: 0,
@@ -75,9 +77,9 @@ export default function BinomialPostTestCalculator() {
     }
     return (
         <div className="bodyContainer">
-            {/*
-            <Button sx={{ mb: "15px" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button>
-            */}
+            <Box sx={{display: 'flex', justifyContent:'center',width: 'max', paddingRight: '5%'}}>
+                <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button>
+            </Box>
             <div className="container">
                 <Box className="Input-form-box">
                     <div className="Form-title">Insert Numbers Here</div>
@@ -163,7 +165,7 @@ export default function BinomialPostTestCalculator() {
                             InputLabelProps={{ shrink: true }}
                         >
                         </TextField>
-                        <Tooltip title={"Enter a value between 80-99. Typically, 95"} placement="left" >
+                        <Tooltip title={isDetailed === true ?"Enter a value between 80-99. Typically, 95" : ''} placement="left" >
                             <Typography color="grey"><InfoOutlinedIcon /> Confidence Level</Typography>
                         </Tooltip>
                         <Slider
@@ -227,7 +229,7 @@ export default function BinomialPostTestCalculator() {
                         InputLabelProps={{ shrink: true }}
                     >
                     </TextField>
-                    <Tooltip title={<span ><div style={{ color: "white" }}>If Greater than Zero, Variant has higher conversion rate.</div> <div style={{ color: "white" }}>If Less than Zero, Control has higher conversion rate.</div></span>} placement="left">
+                    <Tooltip title={isDetailed === true ?<span ><div style={{ color: "white" }}>If Greater than Zero, Variant has higher conversion rate.</div> <div style={{ color: "white" }}>If Less than Zero, Control has higher conversion rate.</div></span> : ''} placement="left">
                         <TextField
                             sx={{ m: 1 }}
                             className="desiredLift"
@@ -531,6 +533,7 @@ export default function BinomialPostTestCalculator() {
                     </TableContainer>
                 </Accordion>
             </Box>
+            <ContinuousDefinitions></ContinuousDefinitions>
         </div>
     )
 }

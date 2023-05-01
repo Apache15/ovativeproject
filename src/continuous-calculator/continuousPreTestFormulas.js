@@ -19,29 +19,35 @@ export default function ContinousPreTestFormulas() {
                     aria-controls="panel3a-content"
                     id="panel3a-header"
                 >
-                    <div className="header">Formulas and Notation</div>
+                    <div className="header">Formulas</div>
                 </AccordionSummary>
                 <AccordionDetails sx={{ display: 'flex', padding: "0ch", borderTop: "1px solid rgba(0, 0, 0, .25) " }}>
                     
                     <Box className='col' width='65%' sx={{ margin: '0ch 0ch 0ch 4ch', padding: '1ch' }}>
-                        <Typography align='center' fontWeight='bold'>Formulas</Typography>
                         <Grid container spacing={1}>
                             <Grid item xs={6} md={6}>
-                                
                                 <Box className='formula'>
-                                    <Typography>Kappa</Typography>
-                                    <img src={Kappaimg} width="400vw" height='auto' alt='Standard error formula' />
-                                    <Typography>For example, if the control group is 3 times larger than the variant group, then kappa = 3.</Typography>
+                                    <Typography align="center" fontWeight="bold">Kappa</Typography>
+                                    <table align="center">
+                                        <td><tr></tr><tr>κ = </tr></td>
+                                            <td>
+                                            <tr>𝑛<sub>𝑐</sub></tr>
+                                            <tr><hr></hr></tr>
+                                            <tr>𝑛<sub>𝑣</sub></tr>
+                                        </td>
+                                        <td><tr></tr><tr> or κ𝑛<sub>𝑣</sub> = 𝑛<sub>𝑐</sub></tr></td>
+                                    </table>
+                                    <Typography align="center">For example, if the control group is 3 times larger than the variant group, then kappa = 3.</Typography>
                                 </Box>
                             </Grid>
                             <Grid item xs={6} md={6}>
                                 <Box className='formula' >
-                                    <Typography>Control Group Sample Size</Typography>
-                                    <img src={SSCimg} width="300vw" height='auto' alt='Degrees of freedom formula' />
+                                    <Typography align="center" fontWeight="bold">Control Group Sample Size</Typography>
+                                    <p align="center">𝑛<sub>𝑐</sub> = κ𝑛<sub>𝑣</sub></p>
                                 </Box>
                                 <Box className='formula'>
-                                    <Typography>Variant Group Sample Size</Typography>
-                                    <img src={SSVimg} width="400vw" height='auto' alt='Confidence interval formula' />
+                                    <Typography align="center" fontWeight="bold">Variant Group Sample Size</Typography>
+                                    <img align="right" src={SSVimg} width="400vw" height='auto' alt='Confidence interval formula' />
                                 </Box>
 
                             </Grid>

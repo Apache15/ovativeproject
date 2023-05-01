@@ -89,12 +89,14 @@ export default function ContPostTest() {
     return (
         <div className='body-container'>
             <Container maxWidth="xl" sx={{ paddingBottom: "4ch" }}>
-                {/* <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltip Detail</Button> */}
+                <Box sx={{display: 'flex', justifyContent:'center',width: 'max', paddingRight: '5%'}}>
+                    <Button sx={{ ml: "7vh", mt: "1vh", mb: "1vh", width: "12vw" }} className="Detail-toggle" variant="contained" onClick={() => setDetail(!isDetailed)}>Toggle Tooltips</Button>
+                </Box>
                 <div className="container">
                     <Box className='Input-form-box'>
                         <div className="Form-title">Insert Numbers Here</div>
                         <FormControl>
-                            <Tooltip title={"The average revenue for the group tested"} placement="left" >
+                            <Tooltip title={isDetailed === true ?"The average revenue for the group tested" : ''} placement="left" >
                                 <TextField sx={{ m: "1ch",   }}
                                     className="Avg-Rev-Var"
                                     variant="standard"
@@ -111,7 +113,7 @@ export default function ContPostTest() {
                                     }}
                                 />
                             </Tooltip>
-                            <Tooltip title={"The average revenue for the group being compared"} placement="left">
+                            <Tooltip title={isDetailed === true ?"The average revenue for the group being compared": ''} placement="left">
                                 <TextField sx={{ m: "1ch",   }}
                                     className="Avg-Rev-Ctrl"
                                     variant="standard"
@@ -128,7 +130,7 @@ export default function ContPostTest() {
                                     }}
                                 />
                             </Tooltip>
-                            <Tooltip title={"The dispersion of the data compared to the mean for the variant group"} placement="left">
+                            <Tooltip title={isDetailed === true ?"The dispersion of the data compared to the mean for the variant group": ''} placement="left">
                                 <TextField sx={{ m: "1ch",   }}
                                     className="Std-Dev-Var"
                                     variant="standard"
@@ -145,7 +147,7 @@ export default function ContPostTest() {
                                     }}
                                 />
                             </Tooltip>
-                            <Tooltip title={"The dispersion of the data compared to the mean for the control group"} placement="left">
+                            <Tooltip title={isDetailed === true ?"The dispersion of the data compared to the mean for the control group": ''} placement="left">
                                 <TextField sx={{ m: "1ch",   }}
                                     className="Std-Dev-Ctrl"
                                     variant="standard"
@@ -162,7 +164,7 @@ export default function ContPostTest() {
                                     }}
                                 />
                             </Tooltip>
-                            <Tooltip title={"The number of people exposed to the variant test"} placement="left">
+                            <Tooltip title={isDetailed === true ?"The number of people exposed to the variant test": ''} placement="left">
                                 <TextField sx={{ m: "1ch",   }}
                                     className="Sample-Size-Var"
                                     variant="standard"
@@ -179,7 +181,7 @@ export default function ContPostTest() {
                                     }}
                                 />
                             </Tooltip>
-                            <Tooltip title={"The number of people exposed to the control test"} placement="left">
+                            <Tooltip title={isDetailed === true ?"The number of people exposed to the control test": ''} placement="left">
                                 <TextField sx={{ m: "1ch",   }}
                                     className="Sample-Size-Ctrl"
                                     variant="standard"
@@ -197,7 +199,7 @@ export default function ContPostTest() {
                                 />
                             </Tooltip>
                             <Typography>Confidence Level</Typography>
-                            <Tooltip title={"Used in the confidence interval to choose how confident we are that our data is within a specific range"} placement="left">
+                            <Tooltip title={isDetailed === true ?"Used in the confidence interval to choose how confident we are that our data is within a specific range": ''} placement="left">
                                 <Slider
                                     marks={
                                         [
@@ -222,7 +224,7 @@ export default function ContPostTest() {
                                     onChange={handleInputChange}
                                 />
                             </Tooltip>
-                            <Tooltip title={"The number of days the test was offered for"} placement="left" >
+                            <Tooltip title={isDetailed === true ?"The number of days the test was offered for": ''} placement="left" >
                                 <TextField sx={{ m: "1ch",   }}
                                     className="testDuration"
                                     variant="standard"
@@ -245,7 +247,7 @@ export default function ContPostTest() {
                     <Box className='Input-form-box' justifyContent={'start'}>
                         <div className="Form-title">Outputs</div>
                         <FormControl>
-                            <Tooltip title={"The difference between the averages of the variant versus control group"} placement="left">
+                            <Tooltip title={isDetailed === true ?"The difference between the averages of the variant versus control group": ''} placement="left">
                                 <TextField sx={{ m: "1ch",   }}
                                     variant="filled"
                                     className='Avg-Rev-Out'
@@ -257,7 +259,7 @@ export default function ContPostTest() {
                                 >
                                 </TextField>
                             </Tooltip>
-                            <Tooltip title={"Shows how closely your observed data match the distribution expected under the null hypothesis."} placement="left">
+                            <Tooltip title={isDetailed === true ?"Shows how closely your observed data match the distribution expected under the null hypothesis.": ''} placement="left">
                                 <TextField sx={{ m: "1ch",   }}
                                     variant="filled"
                                     className='Test-Stat-Out'
@@ -269,7 +271,7 @@ export default function ContPostTest() {
                                 >
                                 </TextField>
                             </Tooltip>
-                            <Tooltip title={"The probability of obtaining results at least as extreme as the observed results, assuming the null hypothesis is true."} placement="left">
+                            <Tooltip title={isDetailed === true ?"The probability of obtaining results at least as extreme as the observed results, assuming the null hypothesis is true.": ''} placement="left">
                                 <TextField sx={{ m: "1ch",   }}
                                     variant="filled"
                                     className='P-Value-out'
@@ -281,7 +283,7 @@ export default function ContPostTest() {
                                 >
                                 </TextField>
                             </Tooltip>
-                            <Tooltip title={"How confident we are that the revenue difference is in this interval"} placement="left">
+                            <Tooltip title={isDetailed === true ?"How confident we are that the revenue difference is in this interval": ''} placement="left">
                                 <TextField sx={{ m: "1ch",   }}
                                     variant='filled'
                                     className='Confidence-Interval-Out'
@@ -292,7 +294,7 @@ export default function ContPostTest() {
                                 >
                                 </TextField>
                             </Tooltip>
-                            <Tooltip title={"Percent increase or decrease in metric for users who received a variant versus a control group"} placement="left">
+                            <Tooltip title={isDetailed === true ?"Percent increase or decrease in metric for users who received a variant versus a control group": ''} placement="left">
                                 <TextField sx={{ m: "1ch",   }}
                                     variant="filled"
                                     className='lift-out'
@@ -308,7 +310,7 @@ export default function ContPostTest() {
                                 </TextField>
                             </Tooltip>
                             <Tooltip
-                                title={"We " + inputs.confidenceLvl + "% are confident that the true revenue lift is within the interval"} placement="left">
+                                title={isDetailed === true ?"We " + inputs.confidenceLvl + "% are confident that the true revenue lift is within the interval": ''} placement="left">
                                 <TextField sx={{ m: "1ch",   }}
                                     variant="filled"
                                     className='Lift-Confidence-Interval-Out'
